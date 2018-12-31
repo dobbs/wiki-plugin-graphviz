@@ -1,0 +1,37 @@
+{
+  "title": "About Graphviz Plugin",
+  "story": [
+  {
+    "type": "paragraph",
+    "id": "eedd14de0c0f8279",
+    "text": "Here we describe the purpose of the plugin and include a sample."
+  },
+  {
+    "type": "graphviz",
+    "id": "240260e8007029c0",
+    "text": "This is text in the new plugin. You can *double-click* to edit it too."
+  }
+],
+  "journal": [
+  {
+    "type": "create",
+    "item": {
+      "title": "About Graphviz Plugin",
+      "story": [
+  {
+    "type": "paragraph",
+    "id": "eedd14de0c0f8279",
+    "text": "Here we describe the purpose of the plugin and include a sample."
+  },
+  {
+    "type": "graphviz",
+    "id": "240260e8007029c0",
+    "text": "This is text in the new plugin. You can *double-click* to edit it too."
+  }
+]
+    },
+    "date": 1546029410000,
+    "certificate": "from mkplugin.sh"
+  }
+]
+}
