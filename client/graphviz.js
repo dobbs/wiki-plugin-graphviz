@@ -20,9 +20,14 @@
   };
 
   bind = function($item, item) {
-    return $item.dblclick(() => {
+    $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
+    $item.find('graphviz-viewer').dblclick(event => {
+      event.stopPropagation()
+      wiki.dialog('', `<div><graphviz-viewer>${item.text}</graphviz-viewer></div>`)
+    })
+    return $item
   };
 
   if (typeof wiki.getModule === "undefined") {
