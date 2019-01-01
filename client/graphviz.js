@@ -26,7 +26,7 @@
   };
 
   if (typeof wiki.getModule === "undefined") {
-    wiki.getModule = _.memoize(async (url) => {
+    wiki.getModule = _.memoize((url) => {
       let script = document.createElement('script')
       script.type = 'module'
       script.src = url
