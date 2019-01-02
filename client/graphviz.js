@@ -23,14 +23,24 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
-    $item.find('graphviz-viewer').dblclick(event => {
+    let viewer = $item.find('graphviz-viewer')
+    viewer.dblclick(event => {
       event.stopPropagation()
-      wiki.dialog('', `<div><graphviz-viewer>${item.text}</graphviz-viewer></div>`)
+      wiki.dialog('Graphviz', `<div><graphviz-viewer>${item.text}</graphviz-viewer></div>`)
     })
-    return $item
+    setTimeout(()=>{
+      $(viewer.get(0).shadowRoot).find('.node').click((event)=> {
+        event.stopPropagation()
+        event.preventDefault()
+        let node = event.target.innerHTML
+        console.log('click',node)
+        let page = event.shiftKey ? null : $item.parents('.page')
+        wiki.doInternalLink(node, page)
+      })
+    }, 3000)
   };
 
-  if (typeof wiki.getModule === "undefined") {
+  if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {
     wiki.getModule = _.memoize((url) => {
       let script = document.createElement('script')
       script.type = 'module'

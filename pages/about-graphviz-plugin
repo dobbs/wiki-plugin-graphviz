@@ -4,12 +4,12 @@
   {
     "type": "paragraph",
     "id": "eedd14de0c0f8279",
-    "text": "Here we describe the purpose of the plugin and include a sample."
+    "text": "This plugin renders Graphviz 'dot' markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
   },
   {
     "type": "graphviz",
     "id": "240260e8007029c0",
-    "text": "This is text in the new plugin. You can *double-click* to edit it too."
+    "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
   }
 ],
   "journal": [
@@ -21,12 +21,12 @@
   {
     "type": "paragraph",
     "id": "eedd14de0c0f8279",
-    "text": "Here we describe the purpose of the plugin and include a sample."
+    "text": "This plugin renders Graphviz's dot markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
   },
   {
     "type": "graphviz",
     "id": "240260e8007029c0",
-    "text": "This is text in the new plugin. You can *double-click* to edit it too."
+    "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
   }
 ]
     },
