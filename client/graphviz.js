@@ -32,7 +32,7 @@
       $(viewer.get(0).shadowRoot).find('.node').click((event)=> {
         event.stopPropagation()
         event.preventDefault()
-        let node = event.target.innerHTML
+        let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
         console.log('click',node)
         let page = event.shiftKey ? null : $item.parents('.page')
         wiki.doInternalLink(node, page)
