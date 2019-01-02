@@ -1,5 +1,5 @@
 (function() {
-  var bind, emit, expand;
+  var bind, emit, expand, moduleLoaded;
 
   // http://viz-js.com/
   // https://github.com/fedwiki/wiki/issues/63
@@ -19,7 +19,8 @@
     </div>`)
   };
 
-  bind = function($item, item) {
+  bind = async function($item, item) {
+    await moduleLoaded
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
@@ -28,8 +29,8 @@
       event.stopPropagation()
       wiki.dialog('Graphviz', `<div><graphviz-viewer>${item.text}</graphviz-viewer></div>`)
     })
-    setTimeout(()=>{
-      $(viewer.get(0).shadowRoot).find('.node').click((event)=> {
+    viewer.get(0).render().then(svg => {
+      $(svg).find('.node').click((event)=> {
         event.stopPropagation()
         event.preventDefault()
         let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
@@ -37,23 +38,22 @@
         let page = event.shiftKey ? null : $item.parents('.page')
         wiki.doInternalLink(node, page)
       })
-    }, 3000)
+    })
   };
 
   if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {
-    wiki.getModule = _.memoize((url) => {
+    wiki.getModule = _.memoize((url) => new Promise((resolve, reject) => {
       let script = document.createElement('script')
       script.type = 'module'
       script.src = url
-      script.onerror = err => {
-        throw new URIError(`script ${url} failed to load. ${err}`)
-      }
+      script.onload = resolve
+      script.onerror = err => reject(new URIError(`script ${url} failed to load. ${err}`))
       document.head.appendChild(script)
-    })
+    }))
   }
 
   if (typeof window !== "undefined" && window !== null) {
-    wiki.getModule('/plugins/graphviz/graphviz-viewer.js')
+    moduleLoaded = wiki.getModule('/plugins/graphviz/graphviz-viewer.js')
     window.plugins.graphviz = {emit, bind};
   }
 
