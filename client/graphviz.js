@@ -7,7 +7,7 @@
   expand = text => {
     return text
       .replace(/&/g, '&amp;')
-      .replace(/</g, '&Lt;')
+      .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
   };
@@ -15,7 +15,7 @@
   emit = ($item, item) => {
     return $item.append(`
     <div data-item="viewer" style="background-color:#eee;padding:15px;">
-    <graphviz-viewer>${item.text}</graphviz-viewer>
+    <graphviz-viewer>${expand(item.text)}</graphviz-viewer>
     </div>`)
   };
 
@@ -27,7 +27,7 @@
     let viewer = $item.find('graphviz-viewer')
     viewer.dblclick(event => {
       event.stopPropagation()
-      wiki.dialog('Graphviz', `<div><graphviz-viewer>${item.text}</graphviz-viewer></div>`)
+      wiki.dialog('Graphviz', `<div><graphviz-viewer>${expand(item.text)}</graphviz-viewer></div>`)
     })
     viewer.get(0).render().then(svg => {
       $(svg).find('.node').click((event)=> {
