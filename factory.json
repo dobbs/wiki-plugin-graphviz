@@ -1,5 +1,5 @@
 {
   "name": "Graphviz",
-  "title": "Graphviz Plugin",
-  "category": "other"
+  "title": "Dot Formatted Diagram",
+  "category": "format"
 }
