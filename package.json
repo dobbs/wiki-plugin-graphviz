@@ -13,7 +13,10 @@
     "email": "eric@dobbse.net",
     "url": "https://wiki.dbbs.co"
   },
-  "contributors": [],
+  "contributors": [
+    "Eric Dobbs <eric@dobbse.net>",
+    "Ward Cunningham <ward@c2.com>"
+  ],
   "scripts": {
     "test": "mocha"
   },

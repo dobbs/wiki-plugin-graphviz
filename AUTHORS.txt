@@ -1,0 +1,4 @@
+Authors ordered by first contribution
+
+Eric Dobbs <edobbs@newrelic.com>
+Ward Cunningham <ward@c2.com>
