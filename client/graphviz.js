@@ -14,7 +14,7 @@
 
   emit = ($item, item) => {
     return $item.append(`
-    <div data-item="viewer" style="background-color:#eee;padding:15px;">
+    <div data-item="viewer" style="width:98%">
     <graphviz-viewer>${expand(item.text)}</graphviz-viewer>
     </div>`)
   };
@@ -26,8 +26,10 @@
     });
     let viewer = $item.find('graphviz-viewer')
     viewer.dblclick(event => {
-      event.stopPropagation()
-      wiki.dialog('Graphviz', `<div><graphviz-viewer>${expand(item.text)}</graphviz-viewer></div>`)
+      if(event.shiftKey) {
+        event.stopPropagation()
+        wiki.dialog('Graphviz', `<div><graphviz-viewer>${expand(item.text)}</graphviz-viewer></div>`)
+      }
     })
     viewer.get(0).render().then(svg => {
       $(svg).find('.node').click((event)=> {
