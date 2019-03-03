@@ -118,6 +118,9 @@
   emit = ($item, item) => {
     return $item.append(`
     <div class="viewer" data-item="viewer" style="width:98%">
+      <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
+        <i>loading diagram</i>
+      </div>
     </div>`)
   };
 
