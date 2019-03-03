@@ -54,9 +54,11 @@
       tree.map ((e) => {
         if (Array.isArray(e)) {
           eval(e, dot)
-        } else {
+        } else if (e.match(/^[A-Z]/)) {
           dot.push(`${parent} -> ${quote(e)}`)
           dot.push(quote(e))
+        } else {
+          dot.push(e)
         }
       })
       return dot
