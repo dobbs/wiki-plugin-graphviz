@@ -18,7 +18,7 @@
       return diagram ($item, item)
     } else if (text.match(/^DOT /)) {
       var root = tree(text.split(/\r?\n/), [], 0)
-      var dot = `digraph {${eval(root,['ROOT']).join("\n")}}`
+      var dot = `digraph {${eval(root,'ROOT',[]).join("\n")}}`
       // console.log('dot',dot)
       return dot
     } else {
@@ -49,18 +49,21 @@
       return `"${string.replace(/ +/g,'\n')}"`
     }
 
-    function eval(tree, dot) {
-      let parent = dot[dot.length-1]
+    function eval(tree, parent, dot) {
+      var place = parent
+      let deeper = []
       tree.map ((e) => {
         if (Array.isArray(e)) {
-          eval(e, dot)
+          deeper.push({tree:e, parent:place})
         } else if (e.match(/^[A-Z]/)) {
           dot.push(`${parent} -> ${quote(e)}`)
-          dot.push(quote(e))
+          dot.push(place = quote(e))
         } else {
           dot.push(e)
         }
       })
+      deeper.map ((child) =>
+        eval(child.tree, child.parent, dot))
       return dot
     }
   }
