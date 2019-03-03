@@ -32,7 +32,7 @@
         let command = m[2]
         if (spaces == indent) {
           here.push(command)
-          console.log(indent, command)
+          console.log('parse',command)
           lines.shift()
         } else if (spaces > indent) {
           var more = []
@@ -56,9 +56,11 @@
         if (Array.isArray(e)) {
           deeper.push({tree:e, parent:place})
         } else if (e.match(/^[A-Z]/)) {
+          console.log('eval',e.toString())
           dot.push(`${parent} -> ${quote(e)}`)
           dot.push(place = quote(e))
         } else {
+          console.log('eval',e.toString())
           dot.push(e)
         }
       })
