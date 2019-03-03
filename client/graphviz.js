@@ -12,11 +12,61 @@
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
   };
 
+  function makedot($item, item) {
+    let text = item.text
+    if (text.match(/^DOT MEHAFFY$/)) {
+      return diagram ($item, item)
+    } else if (text.match(/^DOT /)) {
+      var root = tree(text.split(/\r?\n/), [], 0)
+      var dot = `digraph {${eval(root,['ROOT']).join("\n")}}`
+      // console.log('dot',dot)
+      return dot
+    } else {
+      return text
+    }
+
+    function tree(lines, here, indent) {
+      while (lines.length) {
+        let m = lines[0].match(/( *)(.*)/)
+        let spaces = m[1].length
+        let command = m[2]
+        if (spaces == indent) {
+          here.push(command)
+          console.log(indent, command)
+          lines.shift()
+        } else if (spaces > indent) {
+          var more = []
+          here.push(more)
+          tree(lines, more, spaces)
+        } else {
+          return here
+        }
+      }
+      return here
+    }
+
+    function quote (string) {
+      return `"${string.replace(/ +/g,'\n')}"`
+    }
+
+    function eval(tree, dot) {
+      let parent = dot[dot.length-1]
+      tree.map ((e) => {
+        if (Array.isArray(e)) {
+          eval(e, dot)
+        } else {
+          dot.push(`${parent} -> ${quote(e)}`)
+          dot.push(quote(e))
+        }
+      })
+      return dot
+    }
+  }
+
   async function diagram ($item, item) {
     let $page = $item.parents('.page')
     let site = $page.data('site')||location.host
     let slug = $page.attr('id')
-    // return `digraph {"${site}"->"${slug}"}`
 
     const get = (url) => fetch(url).then(res => res.json())
     const quote = (string) => `"${string.replace(/ +/g,'\n')}"`
@@ -74,7 +124,7 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
-    let dot = await diagram($item, item)
+    let dot = await makedot($item, item)
     $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
     let $viewer = $item.find('graphviz-viewer')
     // $viewer.dblclick(event => {
