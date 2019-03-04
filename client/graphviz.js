@@ -18,7 +18,13 @@
       return diagram ($item, item)
     } else if (text.match(/^DOT /)) {
       var root = tree(text.split(/\r?\n/), [], 0)
-      var dot = `digraph {${eval(root,'ROOT',[]).join("\n")}}`
+      var here = $item.parents('.page').data().data
+      var context = {
+        name: here.title,
+        page: here,
+        want: here.story.slice()
+      }
+      var dot = `digraph {${eval(root,'ROOT',context,[]).join("\n")}}`
       // console.log('dot',dot)
       return dot
     } else {
@@ -49,23 +55,52 @@
       return `"${string.replace(/ +/g,'\n')}"`
     }
 
-    function eval(tree, parent, dot) {
+    function eval(tree, parent, context, dot) {
       var place = parent
       let deeper = []
-      tree.map ((e) => {
+      for (var pc=0; pc<tree.length; pc++) {
+        let e = tree[pc]
+        const nest = () => (pc+1 < tree.length && Array.isArray(tree[pc+1])) ? tree[++pc] : []
+
         if (Array.isArray(e)) {
           deeper.push({tree:e, parent:place})
+
+        } else if (e.more) {
+          console.log('more', e.more, e)
+          deeper.push({tree:e.nest, parent:place})
+          if (e.more == 'more-links') {
+            console.log('context',context)
+            e.links.map(l=>dot.push(`${quote(context.name)} -> ${quote(l)}`))
+            e.links.map(l=>dot.push(`${place} -> ${quote(l)} [style=dotted]`))
+          }
+
         } else if (e.match(/^[A-Z]/)) {
           console.log('eval',e.toString())
           dot.push(`${parent} -> ${quote(e)}`)
           dot.push(place = quote(e))
+
+          if (e.match(/^LINKS/)) {
+            let text = context.want.map(p=>p.text).join("\n")
+            let links = text.match(/\[\[.*?\]\]/g).map(l => l.slice(2,-2))
+            deeper.push({tree:[{more:'more-links', nest:nest(), links:links}], parent:place}) // shallow copy context?
+          }
+
+          if (e.match(/^HERE/)) {
+            if (context.name != context.page.title) {
+              alert('fetch the page')
+            }
+            dot.push(`${quote(e)} -> ${quote(context.name)} [style=dotted]`)
+            deeper.push({tree:[{more:'more-here', nest:nest()}], parent:place})
+            console.log('tree here', tree)
+          }
+
         } else {
           console.log('eval',e.toString())
           dot.push(e)
         }
-      })
+      }
       deeper.map ((child) =>
-        eval(child.tree, child.parent, dot))
+        eval(child.tree, child.parent, Object.assign({},context), dot))
       return dot
     }
   }
