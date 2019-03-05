@@ -12,7 +12,9 @@
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
   };
 
-  function makedot($item, item) {
+  async function makedot($item, item) {
+    const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
+
     let text = item.text
     if (text.match(/^DOT MEHAFFY$/)) {
       return diagram ($item, item)
@@ -24,9 +26,8 @@
         page: here,
         want: here.story.slice()
       }
-      var dot = `digraph {${eval(root,'ROOT',context,[]).join("\n")}}`
-      // console.log('dot',dot)
-      return dot
+      var dot = await eval(root, context, [])
+      return `digraph {${dot.join("\n")}}`
     } else {
       return text
     }
@@ -55,43 +56,48 @@
       return `"${string.replace(/ +/g,'\n')}"`
     }
 
-    function eval(tree, parent, context, dot) {
-      var place = parent
+    async function get (context) {
+      if (context.name == context.page.title) {
+        return context.page
+      } else {
+        let site = location.host
+        let slug = asSlug(context.name)
+        const res = await fetch(`//${site}/${slug}.json`)
+        return res.ok ? res.json() : null
+      }
+    }
+
+    async function eval(tree, context, dot) {
       let deeper = []
       for (var pc=0; pc<tree.length; pc++) {
         let e = tree[pc]
         const nest = () => (pc+1 < tree.length && Array.isArray(tree[pc+1])) ? tree[++pc] : []
 
         if (Array.isArray(e)) {
-          deeper.push({tree:e, parent:place})
-
-        } else if (e.more) {
-          console.log('more', e.more, e)
-          deeper.push({tree:e.nest, parent:place})
-          if (e.more == 'more-links') {
-            console.log('context',context)
-            e.links.map(l=>dot.push(`${quote(context.name)} -> ${quote(l)}`))
-            e.links.map(l=>dot.push(`${place} -> ${quote(l)} [style=dotted]`))
-          }
+          deeper.push({tree:e, context})
 
         } else if (e.match(/^[A-Z]/)) {
           console.log('eval',e.toString())
-          dot.push(`${parent} -> ${quote(e)}`)
-          dot.push(place = quote(e))
 
           if (e.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = text.match(/\[\[.*?\]\]/g).map(l => l.slice(2,-2))
-            deeper.push({tree:[{more:'more-links', nest:nest(), links:links}], parent:place}) // shallow copy context?
+            let tree = nest()
+            links.map((link) => {
+              dot.push(`${quote(context.name)} -> ${quote(link)}`)
+              deeper.push({tree, context:Object.assign({},context,{name:link})})
+            })
           }
 
           if (e.match(/^HERE/)) {
-            if (context.name != context.page.title) {
-              alert('fetch the page')
+            let tree = nest()
+            let page = await get(context)
+            if (page) {
+              dot.push(quote(context.name))
+              // dot.push(`${quote(e)} -> ${quote(context.name)} [style=dotted]`)
+              newcontext = Object.assign({},context,{page, want:page.story})
+              deeper.push({tree, context:newcontext})
             }
-            dot.push(`${quote(e)} -> ${quote(context.name)} [style=dotted]`)
-            deeper.push({tree:[{more:'more-here', nest:nest()}], parent:place})
-            console.log('tree here', tree)
           }
 
         } else {
@@ -99,8 +105,12 @@
           dot.push(e)
         }
       }
-      deeper.map ((child) =>
-        eval(child.tree, child.parent, Object.assign({},context), dot))
+
+      for (var i=0; i<deeper.length; i++) {
+        let child = deeper[i]
+        await eval(child.tree, child.context, dot)
+      }
+
       return dot
     }
   }
@@ -112,7 +122,6 @@
 
     const get = (url) => fetch(url).then(res => res.json())
     const quote = (string) => `"${string.replace(/ +/g,'\n')}"`
-    const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
     const node = (title,color) => `${quote(title)} [fillcolor=${sites[asSlug(title)]?color:'lightgray'}]`
     var sites = {}, sitemap = await get(`http://${site}/system/sitemap.json`)
     sitemap.map (each => sites[each.slug] = each)
