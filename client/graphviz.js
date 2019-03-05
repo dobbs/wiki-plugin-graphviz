@@ -69,17 +69,18 @@
 
     async function eval(tree, context, dot) {
       let deeper = []
-      for (var pc=0; pc<tree.length; pc++) {
-        let e = tree[pc]
-        const nest = () => (pc+1 < tree.length && Array.isArray(tree[pc+1])) ? tree[++pc] : []
+      var pc = 0
+      while (pc < tree.length) {
+        let ir = tree[pc++]
+        const nest = () => (pc < tree.length && Array.isArray(tree[pc])) ? tree[pc++] : []
 
-        if (Array.isArray(e)) {
-          deeper.push({tree:e, context})
+        if (Array.isArray(ir)) {
+          deeper.push({tree:ir, context})
 
-        } else if (e.match(/^[A-Z]/)) {
-          console.log('eval',e.toString())
+        } else if (ir.match(/^[A-Z]/)) {
+          console.log('eval',ir.toString())
 
-          if (e.match(/^LINKS/)) {
+          if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = text.match(/\[\[.*?\]\]/g).map(l => l.slice(2,-2))
             let tree = nest()
@@ -89,7 +90,7 @@
             })
           }
 
-          if (e.match(/^HERE/)) {
+          if (ir.match(/^HERE/)) {
             let tree = nest()
             let page = await get(context)
             if (page) {
@@ -101,8 +102,8 @@
           }
 
         } else {
-          console.log('eval',e.toString())
-          dot.push(e)
+          console.log('eval',ir.toString())
+          dot.push(ir)
         }
       }
 
