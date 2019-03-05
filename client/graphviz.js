@@ -78,14 +78,19 @@
           deeper.push({tree:ir, context})
 
         } else if (ir.match(/^[A-Z]/)) {
-          console.log('eval',ir.toString())
+          console.log('eval',ir)
 
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = text.match(/\[\[.*?\]\]/g).map(l => l.slice(2,-2))
             let tree = nest()
             links.map((link) => {
-              dot.push(`${quote(context.name)} -> ${quote(link)}`)
+              if (ir.match(/^LINKS HERE -> NODE/)) {
+                dot.push(`${quote(context.name)} -> ${quote(link)}`)
+              }
+              if (ir.match(/^LINKS NODE -> HERE/)) {
+                dot.push(`${quote(context.name)} -> ${quote(link)}`)
+              }
               deeper.push({tree, context:Object.assign({},context,{name:link})})
             })
           }
@@ -94,10 +99,13 @@
             let tree = nest()
             let page = await get(context)
             if (page) {
-              dot.push(quote(context.name))
-              // dot.push(`${quote(e)} -> ${quote(context.name)} [style=dotted]`)
-              newcontext = Object.assign({},context,{page, want:page.story})
-              deeper.push({tree, context:newcontext})
+              if (ir.match(/^HERE NODE/)) {
+                dot.push(quote(context.name))
+              }
+              if (ir.match(/^HERE NODE \w+/)) {
+                dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
+              }
+              deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
             }
           }
 
