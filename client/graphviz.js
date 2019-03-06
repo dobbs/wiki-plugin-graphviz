@@ -20,14 +20,17 @@
       return diagram ($item, item)
     } else if (text.match(/^DOT /)) {
       var root = tree(text.split(/\r?\n/), [], 0)
-      var here = $item.parents('.page').data().data
+      var $page = $item.parents('.page')
+      var here = $page.data('data')
       var context = {
+        graph: 'digraph',
         name: here.title,
+        site: $page.data('site')||location.host,
         page: here,
         want: here.story.slice()
       }
       var dot = await eval(root, context, [])
-      return `digraph {${dot.join("\n")}}`
+      return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
     }
@@ -60,9 +63,8 @@
       if (context.name == context.page.title) {
         return context.page
       } else {
-        let site = location.host
         let slug = asSlug(context.name)
-        const res = await fetch(`//${site}/${slug}.json`)
+        const res = await fetch(`//${context.site}/${slug}.json`)
         return res.ok ? res.json() : null
       }
     }
@@ -79,6 +81,10 @@
 
         } else if (ir.match(/^[A-Z]/)) {
           console.log('eval',ir)
+
+          if (ir.match(/^DOT (strict )?digraph/)) {
+            context.graph = ir.replace(/DOT /,'')
+          }
 
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
