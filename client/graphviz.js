@@ -95,7 +95,7 @@
                 dot.push(`${quote(context.name)} -> ${quote(link)}`)
               }
               if (ir.match(/^LINKS NODE -> HERE/)) {
-                dot.push(`${quote(context.name)} -> ${quote(link)}`)
+                dot.push(`${quote(link)} -> ${quote(context.name)}`)
               }
               deeper.push({tree, context:Object.assign({},context,{name:link})})
             })
@@ -113,6 +113,21 @@
               }
               deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
             }
+          }
+
+          if (ir.match(/^WHERE/)) {
+            let tree = nest()
+            var want = context.want
+            if (m = ir.match(/\/.*?\//)) {
+              let regex = new RegExp(m[0].slice(1,-1))
+              want = want.filter(item => item.text.match(regex))
+            } else if (m = ir.match(/[a-z_]+/)) {
+              let attr = m[0]
+              debugger
+              want = want.filter(item => item[attr])
+              console.log('want',want)
+            }
+            deeper.push({tree, context:Object.assign({},context,{want})})
           }
 
         } else {
