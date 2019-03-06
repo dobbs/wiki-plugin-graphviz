@@ -75,6 +75,7 @@
       while (pc < tree.length) {
         let ir = tree[pc++]
         const nest = () => (pc < tree.length && Array.isArray(tree[pc])) ? tree[pc++] : []
+        const peek = (keyword) => pc < tree.length && tree[pc]==keyword && pc++
 
         if (Array.isArray(ir)) {
           deeper.push({tree:ir, context})
@@ -112,6 +113,12 @@
                 dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
               }
               deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
+            }
+            if (peek('ELSE')) {
+              let tree = nest()
+              if (!page) {
+                deeper.push({tree, context})
+              }
             }
           }
 
