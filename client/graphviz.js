@@ -130,6 +130,15 @@
             deeper.push({tree, context:Object.assign({},context,{want})})
           }
 
+          if (ir.match(/^FAKE/)) {
+            if (ir.match(/^FAKE HERE -> NODE/)) {
+              dot.push(`${quote(context.name)} -> ${quote('post-'+context.name)}`)
+            }
+            if (ir.match(/^FAKE NODE -> HERE/)) {
+              dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
+            }
+          }
+
         } else {
           console.log('eval',ir.toString())
           dot.push(ir)
