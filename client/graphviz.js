@@ -89,7 +89,7 @@
 
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
-            let links = text.match(/\[\[.*?\]\]/g).map(l => l.slice(2,-2))
+            let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
             let tree = nest()
             links.map((link) => {
               if (ir.match(/^LINKS HERE -> NODE/)) {
@@ -127,7 +127,7 @@
             var want = context.want
             if (m = ir.match(/\/.*?\//)) {
               let regex = new RegExp(m[0].slice(1,-1))
-              want = want.filter(item => item.text.match(regex))
+              want = want.filter(item => (item.text||'').match(regex))
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
               debugger
@@ -144,6 +144,17 @@
             if (ir.match(/^FAKE NODE -> HERE/)) {
               dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
             }
+          }
+
+          if (ir.match(/^LINEUP/)) {
+            let tree = nest()
+            let $page = $item.parents('.page')
+            let $lineup = $(`.page:lt(${$('.page').index($page)})`)
+            $lineup.each((i,p) => {
+              let site = $(p).data('site')||location.host
+              let name = $(p).data('data').title
+              deeper.push({tree, context:Object.assign({},context,{site, name})})
+            })
           }
 
         } else {
