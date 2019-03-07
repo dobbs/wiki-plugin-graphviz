@@ -2,10 +2,17 @@
 
 import Viz from './viz.js/viz.es.js'
 
+const template = document.createElement('template')
+template.innerHTML = `
+  <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
+    <i>drawing diagram</i>
+  </div>`
+
 class GraphvizViewer extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({mode: 'open'})
+    this.shadowRoot.appendChild(template.content.cloneNode(true))
     this.workerURL = new URL('./viz.js/full.render.js', import.meta.url)
   }
 
@@ -17,6 +24,7 @@ class GraphvizViewer extends HTMLElement {
         return self.viz.renderSVGElement(self.decodedHTML())
           .then(svg => {
             svg.setAttribute('style', 'width: 100%; height: auto;')
+            self.shadowRoot.innerHTML = ``
             self.shadowRoot.appendChild(svg)
             return svg
           })

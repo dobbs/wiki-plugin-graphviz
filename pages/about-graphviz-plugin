@@ -1,37 +1,114 @@
 {
   "title": "About Graphviz Plugin",
   "story": [
-  {
-    "type": "paragraph",
-    "id": "eedd14de0c0f8279",
-    "text": "This plugin renders Graphviz 'dot' markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
-  },
-  {
-    "type": "graphviz",
-    "id": "240260e8007029c0",
-    "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
-  }
-],
-  "journal": [
-  {
-    "type": "create",
-    "item": {
-      "title": "About Graphviz Plugin",
-      "story": [
-  {
-    "type": "paragraph",
-    "id": "eedd14de0c0f8279",
-    "text": "This plugin renders Graphviz's dot markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
-  },
-  {
-    "type": "graphviz",
-    "id": "240260e8007029c0",
-    "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
-  }
-]
+    {
+      "type": "paragraph",
+      "id": "eedd14de0c0f8279",
+      "text": "This plugin renders Graphviz 'dot' markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
     },
-    "date": 1546029410000,
-    "certificate": "from mkplugin.sh"
-  }
-]
+    {
+      "type": "graphviz",
+      "id": "240260e8007029c0",
+      "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
+    },
+    {
+      "type": "paragraph",
+      "id": "6e56dc12417eb20d",
+      "text": "Common practice is to explore the Graphviz sample gallery for ideas and then examine the the source used to generate features found useful. [http://graphviz.org/gallery/ gallery]"
+    },
+    {
+      "type": "paragraph",
+      "id": "80cc5dff781eba3c",
+      "text": "We support the algorithmic generation of diagrams based on the traversal of wiki sites. For this we intersperse dot language parameters for shapes and colors with all-caps keywords that read and translate wiki pages."
+    },
+    {
+      "type": "paragraph",
+      "id": "c64dde6939acbd3b",
+      "text": "See [[Graphviz Markup Semantics]]"
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "About Graphviz Plugin",
+        "story": [
+          {
+            "type": "paragraph",
+            "id": "eedd14de0c0f8279",
+            "text": "This plugin renders Graphviz's dot markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
+          },
+          {
+            "type": "graphviz",
+            "id": "240260e8007029c0",
+            "text": "digraph {\n\"Welcome Visitors\"->\"Recent Changes\"\n\"Welcome Visitors\"->\"Local Changes\"\n}"
+          }
+        ]
+      },
+      "date": 1546029410000,
+      "certificate": "from mkplugin.sh"
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "6e56dc12417eb20d"
+      },
+      "id": "6e56dc12417eb20d",
+      "type": "add",
+      "after": "240260e8007029c0",
+      "date": 1551847768683
+    },
+    {
+      "type": "edit",
+      "id": "6e56dc12417eb20d",
+      "item": {
+        "type": "paragraph",
+        "id": "6e56dc12417eb20d",
+        "text": "Common practice is to explore the Graphviz sample gallery for ideas and then examine the the source used to generate features found useful."
+      },
+      "date": 1551847919699
+    },
+    {
+      "type": "edit",
+      "id": "6e56dc12417eb20d",
+      "item": {
+        "type": "paragraph",
+        "id": "6e56dc12417eb20d",
+        "text": "Common practice is to explore the Graphviz sample gallery for ideas and then examine the the source used to generate features found useful. [http://graphviz.org/gallery/ gallery]"
+      },
+      "date": 1551847956295
+    },
+    {
+      "type": "add",
+      "id": "80cc5dff781eba3c",
+      "item": {
+        "type": "paragraph",
+        "id": "80cc5dff781eba3c",
+        "text": "We support the algorithmic generation of diagrams based on the traversal of wiki sites. For this we intersperse dot language parameters for shapes and colors with all-caps keywords that read and translate wiki pages. See [[Graphviz Markup Semantics]]"
+      },
+      "after": "6e56dc12417eb20d",
+      "date": 1551848784401
+    },
+    {
+      "type": "edit",
+      "id": "80cc5dff781eba3c",
+      "item": {
+        "type": "paragraph",
+        "id": "80cc5dff781eba3c",
+        "text": "We support the algorithmic generation of diagrams based on the traversal of wiki sites. For this we intersperse dot language parameters for shapes and colors with all-caps keywords that read and translate wiki pages."
+      },
+      "date": 1551848792682
+    },
+    {
+      "type": "add",
+      "id": "c64dde6939acbd3b",
+      "item": {
+        "type": "paragraph",
+        "id": "c64dde6939acbd3b",
+        "text": "See [[Graphviz Markup Semantics]]"
+      },
+      "after": "80cc5dff781eba3c",
+      "date": 1551848794479
+    }
+  ]
 }

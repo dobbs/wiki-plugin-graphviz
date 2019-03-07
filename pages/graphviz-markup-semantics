@@ -1,0 +1,767 @@
+{
+  "title": "Graphviz Markup Semantics",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "5048fa12ac0cc8b7",
+      "text": "We define what happens when markup keywords are encountered by the breadth-first evaluator. See [[Extract Site to Dot]] for examples."
+    },
+    {
+      "type": "markdown",
+      "id": "72ff85d728dd4fd0",
+      "text": "# Context"
+    },
+    {
+      "type": "paragraph",
+      "id": "c9fb2d4b767258a4",
+      "text": "Context is established by keywords, used in place and passed as a copy to nested markup."
+    },
+    {
+      "type": "paragraph",
+      "id": "5916f9f362b95f18",
+      "text": "Keywords that establish a page title, a name in context, do not immediately fetch that page."
+    },
+    {
+      "type": "paragraph",
+      "id": "a6e1009c05859fa1",
+      "text": "Keywords that successfully fetch pages establish that content as the page in context for nested markup."
+    },
+    {
+      "type": "paragraph",
+      "id": "9d5a6ab14f820d6a",
+      "text": "Keywords can subset the page in context and pass that to nested markup."
+    },
+    {
+      "type": "paragraph",
+      "id": "1d4be3cad3a1850d",
+      "text": "Lines without keywords will pass through as is.  [https://graphviz.gitlab.io/_pages/doc/info/lang.html dot]"
+    },
+    {
+      "type": "markdown",
+      "id": "2862f373c7cfce5c",
+      "text": "# Keywords"
+    },
+    {
+      "type": "paragraph",
+      "id": "aa81845f4df55fac",
+      "text": "DOT digraph"
+    },
+    {
+      "type": "paragraph",
+      "id": "ea6116b10bab4c29",
+      "text": "DOT strict digraph"
+    },
+    {
+      "type": "paragraph",
+      "id": "c23a1a269be94fca",
+      "text": "Engage the algorithmic translation of linked wiki pages using the following additional keywords. We support the two dot variations shown."
+    },
+    {
+      "type": "paragraph",
+      "id": "ddc67b912a5f992c",
+      "text": "HERE"
+    },
+    {
+      "type": "paragraph",
+      "id": "0fa5e911c6ecf064",
+      "text": "HERE NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "fb81d124b0374f8b",
+      "text": "HERE NODE label"
+    },
+    {
+      "type": "paragraph",
+      "id": "9a5dd9aedca84506",
+      "text": "The name in context is established as a page to be examined. A fetch is initiated. The page becomes the page in context. Optionally render as node. Optionally render the labeled markup node with a dotted edge to node here."
+    },
+    {
+      "type": "paragraph",
+      "id": "536f6fe3aeff96e5",
+      "text": "LINK"
+    },
+    {
+      "type": "paragraph",
+      "id": "e2e98882fb07b46e",
+      "text": "LINK HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "36deb4964baa5344",
+      "text": "LINK NODE -> HERE"
+    },
+    {
+      "type": "paragraph",
+      "id": "ce8fc80833ef13e2",
+      "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup. Optionally render an edge from/to the page in context to/from each new name in context."
+    },
+    {
+      "type": "paragraph",
+      "id": "a49298c7ab3f2918",
+      "text": "WHERE /reg-ex/"
+    },
+    {
+      "type": "paragraph",
+      "id": "ddd9a8875592ee97",
+      "text": "WHERE graph"
+    },
+    {
+      "type": "paragraph",
+      "id": "2cee4fbba57d8a2c",
+      "text": "The page in context is examined for items matching a condition which become the subset page in context for nested markup."
+    },
+    {
+      "type": "paragraph",
+      "id": "499b8eddb32a7b96",
+      "text": "ELSE"
+    },
+    {
+      "type": "paragraph",
+      "id": "136a724d0c84d8c5",
+      "text": "When the preceding HERE fails to retrieve and establish a page in context then nested markup is evaluated with the previous context in place."
+    },
+    {
+      "type": "paragraph",
+      "id": "e3f86adebe0742df",
+      "text": "FAKE NODE -> HERE"
+    },
+    {
+      "type": "paragraph",
+      "id": "1dd94e53aa04e2a0",
+      "text": "FAKE HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "593e6afec586a37c",
+      "text": "Render an edge from/to the name in context (failed page in context) to/from a fabricated node name based on adding a prefix (pre or post) and an occurrence name (one, two or three) to the name in context."
+    },
+    {
+      "type": "paragraph",
+      "id": "32bd81e743c795e2",
+      "text": "LINEUP"
+    },
+    {
+      "type": "paragraph",
+      "id": "64922df19d0f0ceb",
+      "text": "The site and slug of leftward lineup pages become the name in context for nested markup. "
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "Graphviz Markup Semantics",
+        "story": []
+      },
+      "date": 1551662925921
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "5048fa12ac0cc8b7"
+      },
+      "id": "5048fa12ac0cc8b7",
+      "type": "add",
+      "date": 1551662928431
+    },
+    {
+      "type": "edit",
+      "id": "5048fa12ac0cc8b7",
+      "item": {
+        "type": "paragraph",
+        "id": "5048fa12ac0cc8b7",
+        "text": "We define what happens when markup keywords are encountered by the breadth-first evaluator. See [[Extract Site to Dot]] for examples."
+      },
+      "date": 1551663025544
+    },
+    {
+      "type": "add",
+      "id": "ddc67b912a5f992c",
+      "item": {
+        "type": "paragraph",
+        "id": "ddc67b912a5f992c",
+        "text": "# HERE"
+      },
+      "after": "5048fa12ac0cc8b7",
+      "date": 1551663065087
+    },
+    {
+      "type": "add",
+      "id": "9a5dd9aedca84506",
+      "item": {
+        "type": "paragraph",
+        "id": "9a5dd9aedca84506",
+        "text": "The name in context is established as a page to be examined. A fetch is initiated. The page becomes the page in context."
+      },
+      "after": "ddc67b912a5f992c",
+      "date": 1551663335830
+    },
+    {
+      "type": "edit",
+      "id": "ddc67b912a5f992c",
+      "item": {
+        "type": "paragraph",
+        "id": "ddc67b912a5f992c",
+        "text": "HERE"
+      },
+      "date": 1551663344797
+    },
+    {
+      "type": "add",
+      "id": "536f6fe3aeff96e5",
+      "item": {
+        "type": "paragraph",
+        "id": "536f6fe3aeff96e5",
+        "text": "LINK"
+      },
+      "after": "9a5dd9aedca84506",
+      "date": 1551663509288
+    },
+    {
+      "type": "add",
+      "id": "ce8fc80833ef13e2",
+      "item": {
+        "type": "paragraph",
+        "id": "ce8fc80833ef13e2",
+        "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup."
+      },
+      "after": "536f6fe3aeff96e5",
+      "date": 1551663777962
+    },
+    {
+      "type": "add",
+      "id": "a49298c7ab3f2918",
+      "item": {
+        "type": "paragraph",
+        "id": "a49298c7ab3f2918",
+        "text": "WHERE condition"
+      },
+      "after": "ce8fc80833ef13e2",
+      "date": 1551664009795
+    },
+    {
+      "type": "add",
+      "id": "2cee4fbba57d8a2c",
+      "item": {
+        "type": "paragraph",
+        "id": "2cee4fbba57d8a2c",
+        "text": "The page in context is examined for items matching a condition which become the subset page in context for nested markup."
+      },
+      "after": "a49298c7ab3f2918",
+      "date": 1551664226126
+    },
+    {
+      "type": "add",
+      "id": "499b8eddb32a7b96",
+      "item": {
+        "type": "paragraph",
+        "id": "499b8eddb32a7b96",
+        "text": "NODE"
+      },
+      "after": "2cee4fbba57d8a2c",
+      "date": 1551664563502
+    },
+    {
+      "type": "add",
+      "id": "5572a1d11801fd8f",
+      "item": {
+        "type": "paragraph",
+        "id": "5572a1d11801fd8f",
+        "text": "LINK HERE"
+      },
+      "after": "536f6fe3aeff96e5",
+      "date": 1551665113672
+    },
+    {
+      "type": "remove",
+      "id": "5572a1d11801fd8f",
+      "date": 1551665167562
+    },
+    {
+      "type": "add",
+      "id": "36deb4964baa5344",
+      "item": {
+        "type": "paragraph",
+        "id": "36deb4964baa5344",
+        "text": "LINK NODE -> HERE"
+      },
+      "after": "536f6fe3aeff96e5",
+      "date": 1551665258496
+    },
+    {
+      "type": "add",
+      "id": "e2e98882fb07b46e",
+      "item": {
+        "type": "paragraph",
+        "id": "e2e98882fb07b46e",
+        "text": "LINK HERE -> NODE"
+      },
+      "after": "36deb4964baa5344",
+      "date": 1551665271810
+    },
+    {
+      "type": "add",
+      "id": "438a8de03a8e8d1c",
+      "item": {
+        "type": "paragraph",
+        "id": "438a8de03a8e8d1c",
+        "text": "Optionally relate the page in context to each new name in context with a forward or backward arc."
+      },
+      "after": "ce8fc80833ef13e2",
+      "date": 1551665748571
+    },
+    {
+      "type": "remove",
+      "id": "438a8de03a8e8d1c",
+      "date": 1551665756259
+    },
+    {
+      "type": "edit",
+      "id": "ce8fc80833ef13e2",
+      "item": {
+        "type": "paragraph",
+        "id": "ce8fc80833ef13e2",
+        "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup. Optionally relate the page in context to each new name in context with a forward or backward arc."
+      },
+      "date": 1551665758602
+    },
+    {
+      "type": "move",
+      "order": [
+        "5048fa12ac0cc8b7",
+        "ddc67b912a5f992c",
+        "9a5dd9aedca84506",
+        "536f6fe3aeff96e5",
+        "e2e98882fb07b46e",
+        "36deb4964baa5344",
+        "ce8fc80833ef13e2",
+        "a49298c7ab3f2918",
+        "2cee4fbba57d8a2c",
+        "499b8eddb32a7b96"
+      ],
+      "id": "e2e98882fb07b46e",
+      "date": 1551665766578
+    },
+    {
+      "type": "edit",
+      "id": "a49298c7ab3f2918",
+      "item": {
+        "type": "paragraph",
+        "id": "a49298c7ab3f2918",
+        "text": "WHERE /reg-ex/"
+      },
+      "date": 1551665849350
+    },
+    {
+      "type": "add",
+      "id": "ddd9a8875592ee97",
+      "item": {
+        "type": "paragraph",
+        "id": "ddd9a8875592ee97",
+        "text": "WHERE graph"
+      },
+      "after": "a49298c7ab3f2918",
+      "date": 1551665859496
+    },
+    {
+      "type": "edit",
+      "id": "499b8eddb32a7b96",
+      "item": {
+        "type": "paragraph",
+        "id": "499b8eddb32a7b96",
+        "text": "ELSE"
+      },
+      "date": 1551665996010
+    },
+    {
+      "type": "add",
+      "id": "136a724d0c84d8c5",
+      "item": {
+        "type": "paragraph",
+        "id": "136a724d0c84d8c5",
+        "text": "When "
+      },
+      "after": "499b8eddb32a7b96",
+      "date": 1551666091826
+    },
+    {
+      "type": "edit",
+      "id": "136a724d0c84d8c5",
+      "item": {
+        "type": "paragraph",
+        "id": "136a724d0c84d8c5",
+        "text": "When the preceding HERE fails to retrieve and establish a page in context then nested markup evaluated with the previous context in place."
+      },
+      "date": 1551666337570
+    },
+    {
+      "type": "add",
+      "id": "1dd94e53aa04e2a0",
+      "item": {
+        "type": "paragraph",
+        "id": "1dd94e53aa04e2a0",
+        "text": "FAKE HERE -> NODE"
+      },
+      "after": "136a724d0c84d8c5",
+      "date": 1551666368938
+    },
+    {
+      "type": "add",
+      "id": "e3f86adebe0742df",
+      "item": {
+        "type": "paragraph",
+        "id": "e3f86adebe0742df",
+        "text": "FAKE NODE -> HERE"
+      },
+      "after": "1dd94e53aa04e2a0",
+      "date": 1551666383728
+    },
+    {
+      "type": "edit",
+      "id": "136a724d0c84d8c5",
+      "item": {
+        "type": "paragraph",
+        "id": "136a724d0c84d8c5",
+        "text": "When the preceding HERE fails to retrieve and establish a page in context then nested markup is evaluated with the previous context in place."
+      },
+      "date": 1551666436015
+    },
+    {
+      "type": "add",
+      "id": "593e6afec586a37c",
+      "item": {
+        "type": "paragraph",
+        "id": "593e6afec586a37c",
+        "text": "Relate the name in context (failed page in context) to a fabricated node name based on adding a prefix (pre or post) and an occurrence name (one, two or three) to the name in context."
+      },
+      "after": "e3f86adebe0742df",
+      "date": 1551666705030
+    },
+    {
+      "type": "move",
+      "order": [
+        "5048fa12ac0cc8b7",
+        "ddc67b912a5f992c",
+        "9a5dd9aedca84506",
+        "536f6fe3aeff96e5",
+        "e2e98882fb07b46e",
+        "36deb4964baa5344",
+        "ce8fc80833ef13e2",
+        "a49298c7ab3f2918",
+        "ddd9a8875592ee97",
+        "2cee4fbba57d8a2c",
+        "499b8eddb32a7b96",
+        "136a724d0c84d8c5",
+        "e3f86adebe0742df",
+        "1dd94e53aa04e2a0",
+        "593e6afec586a37c"
+      ],
+      "id": "e3f86adebe0742df",
+      "date": 1551666728360
+    },
+    {
+      "type": "add",
+      "id": "32bd81e743c795e2",
+      "item": {
+        "type": "paragraph",
+        "id": "32bd81e743c795e2",
+        "text": "LINEUP"
+      },
+      "after": "593e6afec586a37c",
+      "date": 1551666864826
+    },
+    {
+      "type": "add",
+      "id": "64922df19d0f0ceb",
+      "item": {
+        "type": "paragraph",
+        "id": "64922df19d0f0ceb",
+        "text": "The site and slug of leftward lineup pages become the name in context for nested markup. "
+      },
+      "after": "32bd81e743c795e2",
+      "date": 1551667188610
+    },
+    {
+      "type": "add",
+      "id": "72ff85d728dd4fd0",
+      "item": {
+        "type": "paragraph",
+        "id": "72ff85d728dd4fd0",
+        "text": "# Context"
+      },
+      "after": "5048fa12ac0cc8b7",
+      "date": 1551667228097
+    },
+    {
+      "type": "add",
+      "id": "c9fb2d4b767258a4",
+      "item": {
+        "type": "paragraph",
+        "id": "c9fb2d4b767258a4",
+        "text": "Context is established by keywords, used in place and passed as a copy to nested markup."
+      },
+      "after": "72ff85d728dd4fd0",
+      "date": 1551667414947
+    },
+    {
+      "type": "add",
+      "id": "5916f9f362b95f18",
+      "item": {
+        "type": "paragraph",
+        "id": "5916f9f362b95f18",
+        "text": "Keywords that establish a page title, a name in context, do not immediately fetch that page. Keywords that successfully fetch pages establish that content as the page in context."
+      },
+      "after": "c9fb2d4b767258a4",
+      "date": 1551667659619
+    },
+    {
+      "type": "edit",
+      "id": "72ff85d728dd4fd0",
+      "item": {
+        "type": "markdown",
+        "id": "72ff85d728dd4fd0",
+        "text": "# Context"
+      },
+      "date": 1551667666723
+    },
+    {
+      "type": "edit",
+      "id": "5916f9f362b95f18",
+      "item": {
+        "type": "paragraph",
+        "id": "5916f9f362b95f18",
+        "text": "Keywords that establish a page title, a name in context, do not immediately fetch that page."
+      },
+      "date": 1551667673027
+    },
+    {
+      "type": "add",
+      "id": "a6e1009c05859fa1",
+      "item": {
+        "type": "paragraph",
+        "id": "a6e1009c05859fa1",
+        "text": "Keywords that successfully fetch pages establish that content as the page in context."
+      },
+      "after": "5916f9f362b95f18",
+      "date": 1551667674578
+    },
+    {
+      "type": "add",
+      "id": "2862f373c7cfce5c",
+      "item": {
+        "type": "paragraph",
+        "id": "2862f373c7cfce5c",
+        "text": "# Keywords"
+      },
+      "after": "a6e1009c05859fa1",
+      "date": 1551667684725
+    },
+    {
+      "type": "edit",
+      "id": "2862f373c7cfce5c",
+      "item": {
+        "type": "markdown",
+        "id": "2862f373c7cfce5c",
+        "text": "# Keywords"
+      },
+      "date": 1551667687113
+    },
+    {
+      "type": "add",
+      "id": "9d5a6ab14f820d6a",
+      "item": {
+        "type": "paragraph",
+        "id": "9d5a6ab14f820d6a",
+        "text": "Keywords can subset the page in context and pass that to nested markup."
+      },
+      "after": "a6e1009c05859fa1",
+      "date": 1551667771445
+    },
+    {
+      "type": "edit",
+      "id": "a6e1009c05859fa1",
+      "item": {
+        "type": "paragraph",
+        "id": "a6e1009c05859fa1",
+        "text": "Keywords that successfully fetch pages establish that content as the page in context for nested markup."
+      },
+      "date": 1551667795833
+    },
+    {
+      "type": "add",
+      "id": "0fa5e911c6ecf064",
+      "item": {
+        "type": "paragraph",
+        "id": "0fa5e911c6ecf064",
+        "text": "HERE NODE"
+      },
+      "after": "ddc67b912a5f992c",
+      "date": 1551798708492
+    },
+    {
+      "type": "edit",
+      "id": "9a5dd9aedca84506",
+      "item": {
+        "type": "paragraph",
+        "id": "9a5dd9aedca84506",
+        "text": "The name in context is established as a page to be examined. A fetch is initiated. The page becomes the page in context. Optionally render as node."
+      },
+      "date": 1551798805426
+    },
+    {
+      "type": "edit",
+      "id": "ce8fc80833ef13e2",
+      "item": {
+        "type": "paragraph",
+        "id": "ce8fc80833ef13e2",
+        "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup. Optionally render arc from/to the page in context to/from each new name in context."
+      },
+      "date": 1551798910808
+    },
+    {
+      "type": "edit",
+      "id": "593e6afec586a37c",
+      "item": {
+        "type": "paragraph",
+        "id": "593e6afec586a37c",
+        "text": "Render an arc from/to the name in context (failed page in context) to/from a fabricated node name based on adding a prefix (pre or post) and an occurrence name (one, two or three) to the name in context."
+      },
+      "date": 1551798968485
+    },
+    {
+      "type": "edit",
+      "id": "ce8fc80833ef13e2",
+      "item": {
+        "type": "paragraph",
+        "id": "ce8fc80833ef13e2",
+        "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup. Optionally render an edge from/to the page in context to/from each new name in context."
+      },
+      "date": 1551799122044
+    },
+    {
+      "type": "edit",
+      "id": "593e6afec586a37c",
+      "item": {
+        "type": "paragraph",
+        "id": "593e6afec586a37c",
+        "text": "Render an edge from/to the name in context (failed page in context) to/from a fabricated node name based on adding a prefix (pre or post) and an occurrence name (one, two or three) to the name in context."
+      },
+      "date": 1551799131880
+    },
+    {
+      "type": "add",
+      "id": "1d4be3cad3a1850d",
+      "item": {
+        "type": "paragraph",
+        "id": "1d4be3cad3a1850d",
+        "text": "Lines without keywords will pass through as dot. [https://graphviz.gitlab.io/_pages/doc/info/lang.html graphviz]"
+      },
+      "after": "9d5a6ab14f820d6a",
+      "date": 1551808218559
+    },
+    {
+      "type": "edit",
+      "id": "1d4be3cad3a1850d",
+      "item": {
+        "type": "paragraph",
+        "id": "1d4be3cad3a1850d",
+        "text": "Lines without keywords will pass through as is.  [https://graphviz.gitlab.io/_pages/doc/info/lang.html dot]"
+      },
+      "date": 1551808268547
+    },
+    {
+      "type": "add",
+      "id": "fb81d124b0374f8b",
+      "item": {
+        "type": "paragraph",
+        "id": "fb81d124b0374f8b",
+        "text": "HERE NODE label"
+      },
+      "after": "0fa5e911c6ecf064",
+      "date": 1551829777118
+    },
+    {
+      "type": "edit",
+      "id": "9a5dd9aedca84506",
+      "item": {
+        "type": "paragraph",
+        "id": "9a5dd9aedca84506",
+        "text": "The name in context is established as a page to be examined. A fetch is initiated. The page becomes the page in context. Optionally render as node. Optionally render the labeled markup node with a dotted edge to node here."
+      },
+      "date": 1551829851455
+    },
+    {
+      "type": "add",
+      "id": "aa81845f4df55fac",
+      "item": {
+        "type": "paragraph",
+        "id": "aa81845f4df55fac",
+        "text": "DOT digraph"
+      },
+      "after": "1d4be3cad3a1850d",
+      "date": 1551848260071
+    },
+    {
+      "type": "move",
+      "order": [
+        "5048fa12ac0cc8b7",
+        "72ff85d728dd4fd0",
+        "c9fb2d4b767258a4",
+        "5916f9f362b95f18",
+        "a6e1009c05859fa1",
+        "9d5a6ab14f820d6a",
+        "1d4be3cad3a1850d",
+        "2862f373c7cfce5c",
+        "aa81845f4df55fac",
+        "ddc67b912a5f992c",
+        "0fa5e911c6ecf064",
+        "fb81d124b0374f8b",
+        "9a5dd9aedca84506",
+        "536f6fe3aeff96e5",
+        "e2e98882fb07b46e",
+        "36deb4964baa5344",
+        "ce8fc80833ef13e2",
+        "a49298c7ab3f2918",
+        "ddd9a8875592ee97",
+        "2cee4fbba57d8a2c",
+        "499b8eddb32a7b96",
+        "136a724d0c84d8c5",
+        "e3f86adebe0742df",
+        "1dd94e53aa04e2a0",
+        "593e6afec586a37c",
+        "32bd81e743c795e2",
+        "64922df19d0f0ceb"
+      ],
+      "id": "aa81845f4df55fac",
+      "date": 1551848265859
+    },
+    {
+      "type": "add",
+      "id": "ea6116b10bab4c29",
+      "item": {
+        "type": "paragraph",
+        "id": "ea6116b10bab4c29",
+        "text": "DOT strict digraph"
+      },
+      "after": "aa81845f4df55fac",
+      "date": 1551848282640
+    },
+    {
+      "type": "add",
+      "id": "c23a1a269be94fca",
+      "item": {
+        "type": "paragraph",
+        "id": "c23a1a269be94fca",
+        "text": "Engage the algorithmic translation of linked wiki pages using the following additional keywords. We support the two dot variations shown."
+      },
+      "after": "ea6116b10bab4c29",
+      "date": 1551848500191
+    },
+    {
+      "type": "fork",
+      "site": "ward.asia.wiki.org",
+      "date": 1551848565370
+    }
+  ]
+}
