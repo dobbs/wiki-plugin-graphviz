@@ -2,28 +2,6 @@
 
 import Viz from './viz.js/viz.es.js'
 
-
-// const template = document.createElement('template');
-// template.innerHTML = `
-// <style>
-// :host {
-//   display: flex;
-//   flex-flow: row nowrap;
-//   width: 100%;
-//   height: 100%;
-// }
-// </style>
-// <slot></slot>`
-// class WikiLineup extends HTMLElement {
-//   constructor() {
-//     super()
-//     this.attachShadow({ mode: 'open' })
-//     this.shadowRoot.appendChild(template.content.cloneNode(true))
-//   }
-// }
-// customElements.define('wiki-lineup', WikiLineup)
-// export default WikiLineup
-
 const template = document.createElement('template')
 template.innerHTML = `
   <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">

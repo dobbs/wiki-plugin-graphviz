@@ -238,12 +238,14 @@
     let dot = await makedot($item, item)
     $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
     let $viewer = $item.find('graphviz-viewer')
-    // $viewer.dblclick(event => {
-    //   if(event.shiftKey) {
-    //     event.stopPropagation()
-    //     wiki.dialog('Graphviz', `<div><graphviz-viewer>${expand(item.text)}</graphviz-viewer></div>`)
-    //   }
-    // })
+    $viewer.dblclick(event => {
+      if(event.shiftKey) {
+        event.stopPropagation()
+        let svg = $item.find('graphviz-viewer').get(0)
+            .shadowRoot.querySelector('svg').cloneNode(true)
+        wiki.dialog('Graphviz', svg)
+      }
+    })
     $viewer.get(0).render().then(svg => {
       $(svg).find('.node').click((event)=> {
         event.stopPropagation()
