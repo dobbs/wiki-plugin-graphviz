@@ -115,11 +115,11 @@
             let tree = nest()
             let page = await get(context)
             if (page) {
-              if (ir.match(/^HERE NODE/)) {
+              if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
               } else
               if (ir.match(/^HERE NODE \w+/)) {
-                let kind = context == 'digraph' ? '->' : '--'
+                let kind = context.graph.match(/digraph/) ? '->' : '--'
                 dot.push(`${quote(ir)} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
               if (!ir.match(/^HERE$/)) {
