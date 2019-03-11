@@ -18,12 +18,13 @@
     let text = item.text
     if (text.match(/^DOT MEHAFFY$/)) {
       return diagram ($item, item)
-    } else if (text.match(/^DOT /)) {
+    } else if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
+      root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
       var context = {
-        graph: 'digraph',
+        graph: m[1],
         name: here.title,
         site: $page.data('site')||location.host,
         page: here,
@@ -88,10 +89,6 @@
 
         } else if (ir.match(/^[A-Z]/)) {
           console.log('eval',ir)
-
-          if (ir.match(/^DOT (strict )?(di)?graph/)) {
-            context.graph = ir.replace(/DOT /,'')
-          } else
 
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
