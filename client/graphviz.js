@@ -30,6 +30,7 @@
         want: here.story.slice()
       }
       var dot = await eval(root, context, [])
+      console.log('dot', dot)
       return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
@@ -83,24 +84,25 @@
         } else if (ir.match(/^[A-Z]/)) {
           console.log('eval',ir)
 
-          if (ir.match(/^DOT (strict )?digraph/)) {
+          if (ir.match(/^DOT (strict )?(di)?graph/)) {
             context.graph = ir.replace(/DOT /,'')
-          }
+          } else
 
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
             let tree = nest()
             links.map((link) => {
-              if (ir.match(/^LINKS HERE -> NODE/)) {
-                dot.push(`${quote(context.name)} -> ${quote(link)}`)
-              }
+              if (ir.match(/^LINKS HERE (->|--) NODE/)) {
+                let kind = ir.match(/->|--/)
+                dot.push(`${quote(context.name)} ${kind} ${quote(link)}`)
+              } else
               if (ir.match(/^LINKS NODE -> HERE/)) {
                 dot.push(`${quote(link)} -> ${quote(context.name)}`)
-              }
+              } else console.log("can't link", ir)
               deeper.push({tree, context:Object.assign({},context,{name:link})})
             })
-          }
+          } else
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
@@ -108,10 +110,10 @@
             if (page) {
               if (ir.match(/^HERE NODE/)) {
                 dot.push(quote(context.name))
-              }
+              } else
               if (ir.match(/^HERE NODE \w+/)) {
                 dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
-              }
+              } else console.log("can't here", ir)
               deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
             }
             if (peek('ELSE')) {
@@ -120,7 +122,7 @@
                 deeper.push({tree, context})
               }
             }
-          }
+          } else
 
           if (ir.match(/^WHERE/)) {
             let tree = nest()
@@ -130,21 +132,19 @@
               want = want.filter(item => (item.text||'').match(regex))
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
-              debugger
               want = want.filter(item => item[attr])
-              console.log('want',want)
-            }
+            } else console.log("can't where", ir)
             deeper.push({tree, context:Object.assign({},context,{want})})
-          }
+          } else
 
           if (ir.match(/^FAKE/)) {
-            if (ir.match(/^FAKE HERE -> NODE/)) {
+            if (ir.match(/^FAKE HERE (->|--) NODE/)) {
               dot.push(`${quote(context.name)} -> ${quote('post-'+context.name)}`)
-            }
+            } else
             if (ir.match(/^FAKE NODE -> HERE/)) {
               dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
-            }
-          }
+            } else console.log("can't fake", ir)
+          } else
 
           if (ir.match(/^LINEUP/)) {
             let tree = nest()
@@ -155,7 +155,7 @@
               let name = $(p).data('data').title
               deeper.push({tree, context:Object.assign({},context,{site, name})})
             })
-          }
+          } else console.log("can't eval", ir)
 
         } else {
           console.log('eval',ir.toString())
