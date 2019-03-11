@@ -98,12 +98,11 @@
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
             let tree = nest()
             links.map((link) => {
-              if (ir.match(/^LINKS HERE (->|--) NODE/)) {
-                let kind = ir.match(/->|--/)
-                dot.push(`${quote(context.name)} ${kind} ${quote(link)}`)
+              if (m = ir.match(/^LINKS HERE (->|--) NODE/)) {
+                dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
               } else
-              if (ir.match(/^LINKS NODE -> HERE/)) {
-                dot.push(`${quote(link)} -> ${quote(context.name)}`)
+              if (m = ir.match(/^LINKS NODE (->|--) HERE/)) {
+                dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
               } else
               if (!ir.match(/^LINKS$/)) {
                 trouble("can't do link", ir)
@@ -120,7 +119,8 @@
                 dot.push(quote(context.name))
               } else
               if (ir.match(/^HERE NODE \w+/)) {
-                dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
+                let kind = context == 'digraph' ? '->' : '--'
+                dot.push(`${quote(ir)} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
               if (!ir.match(/^HERE$/)) {
                 trouble("can't do here", ir)
@@ -149,11 +149,11 @@
           } else
 
           if (ir.match(/^FAKE/)) {
-            if (ir.match(/^FAKE HERE (->|--) NODE/)) {
-              dot.push(`${quote(context.name)} -> ${quote('post-'+context.name)}`)
+            if (m = ir.match(/^FAKE HERE (->|--) NODE/)) {
+              dot.push(`${quote(context.name)} ${m[1]} ${quote('post-'+context.name)}`)
             } else
-            if (ir.match(/^FAKE NODE -> HERE/)) {
-              dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
+            if (m = ir.match(/^FAKE NODE (->|--) HERE/)) {
+              dot.push(`${quote('pre-'+context.name)} ${m[1]} ${quote(context.name)}`)
             } else trouble("can't do fake", ir)
           } else
 
