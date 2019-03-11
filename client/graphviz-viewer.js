@@ -2,11 +2,15 @@
 
 import Viz from './viz.js/viz.es.js'
 
+function message (text) {
+  return `
+    <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
+      <i>${text}</i>
+    </div>`
+}
+
 const template = document.createElement('template')
-template.innerHTML = `
-  <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
-    <i>drawing diagram</i>
-  </div>`
+template.innerHTML = message('drawing diagram')
 
 class GraphvizViewer extends HTMLElement {
   constructor() {
@@ -29,6 +33,7 @@ class GraphvizViewer extends HTMLElement {
             return svg
           })
           .then(resolve)
+          .catch(err => self.shadowRoot.innerHTML = message(err.message))
       })
     }
     return this.alreadyRendered

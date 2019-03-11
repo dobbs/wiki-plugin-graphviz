@@ -60,6 +60,11 @@
       return `"${string.replace(/ +/g,'\n')}"`
     }
 
+    function trouble (text, detail) {
+      // console.log(text,detail)
+      throw new Error(text + "\n" + detail)
+    }
+
     async function get (context) {
       if (context.name == context.page.title) {
         return context.page
@@ -99,7 +104,10 @@
               } else
               if (ir.match(/^LINKS NODE -> HERE/)) {
                 dot.push(`${quote(link)} -> ${quote(context.name)}`)
-              } else console.log("can't link", ir)
+              } else
+              if (!ir.match(/^LINKS$/)) {
+                trouble("can't do link", ir)
+              }
               deeper.push({tree, context:Object.assign({},context,{name:link})})
             })
           } else
@@ -113,7 +121,10 @@
               } else
               if (ir.match(/^HERE NODE \w+/)) {
                 dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
-              } else console.log("can't here", ir)
+              } else
+              if (!ir.match(/^HERE$/)) {
+                trouble("can't do here", ir)
+              }
               deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
             }
             if (peek('ELSE')) {
@@ -133,7 +144,7 @@
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
               want = want.filter(item => item[attr])
-            } else console.log("can't where", ir)
+            } else trouble("can't do where", ir)
             deeper.push({tree, context:Object.assign({},context,{want})})
           } else
 
@@ -143,10 +154,10 @@
             } else
             if (ir.match(/^FAKE NODE -> HERE/)) {
               dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
-            } else console.log("can't fake", ir)
+            } else trouble("can't do fake", ir)
           } else
 
-          if (ir.match(/^LINEUP/)) {
+          if (ir.match(/^LINEUP$/)) {
             let tree = nest()
             let $page = $item.parents('.page')
             let $lineup = $(`.page:lt(${$('.page').index($page)})`)
@@ -155,7 +166,7 @@
               let name = $(p).data('data').title
               deeper.push({tree, context:Object.assign({},context,{site, name})})
             })
-          } else console.log("can't eval", ir)
+          } else trouble("can't do", ir)
 
         } else {
           console.log('eval',ir.toString())
@@ -220,14 +231,18 @@
     return `strict digraph {\n${dot.join("\n")}\n}`
   }
 
-
-  emit = ($item, item) => {
-    return $item.append(`
+  function message (text) {
+    return `
     <div class="viewer" data-item="viewer" style="width:98%">
       <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
-        <i>loading diagram</i>
+        <i>${text}</i>
       </div>
-    </div>`)
+    </div>`
+  }
+
+
+  emit = ($item, item) => {
+    return $item.append(message('loading diagram'))
   };
 
   bind = async function($item, item) {
@@ -235,27 +250,31 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
-    let dot = await makedot($item, item)
-    $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
-    let $viewer = $item.find('graphviz-viewer')
-    $viewer.dblclick(event => {
-      if(event.shiftKey) {
-        event.stopPropagation()
-        let svg = $item.find('graphviz-viewer').get(0)
-            .shadowRoot.querySelector('svg').cloneNode(true)
-        wiki.dialog('Graphviz', svg)
-      }
-    })
-    $viewer.get(0).render().then(svg => {
-      $(svg).find('.node').click((event)=> {
-        event.stopPropagation()
-        event.preventDefault()
-        let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
-        console.log('click',node)
-        let page = event.shiftKey ? null : $item.parents('.page')
-        wiki.doInternalLink(node, page)
+    try {
+      let dot = await makedot($item, item)
+      $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
+      let $viewer = $item.find('graphviz-viewer')
+      $viewer.dblclick(event => {
+        if(event.shiftKey) {
+          event.stopPropagation()
+          let svg = $item.find('graphviz-viewer').get(0)
+              .shadowRoot.querySelector('svg').cloneNode(true)
+          wiki.dialog('Graphviz', svg)
+        }
       })
-    })
+      $viewer.get(0).render().then(svg => {
+        $(svg).find('.node').click((event)=> {
+          event.stopPropagation()
+          event.preventDefault()
+          let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
+          console.log('click',node)
+          let page = event.shiftKey ? null : $item.parents('.page')
+          wiki.doInternalLink(node, page)
+        })
+      })
+    } catch (err) {
+      $item.html(message(err.message))
+    }
   };
 
   if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {
