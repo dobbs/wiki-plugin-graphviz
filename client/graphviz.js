@@ -18,18 +18,20 @@
     let text = item.text
     if (text.match(/^DOT MEHAFFY$/)) {
       return diagram ($item, item)
-    } else if (text.match(/^DOT /)) {
+    } else if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
+      root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
       var context = {
-        graph: 'digraph',
+        graph: m[1],
         name: here.title,
         site: $page.data('site')||location.host,
         page: here,
         want: here.story.slice()
       }
       var dot = await eval(root, context, [])
+      console.log('dot', dot)
       return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
@@ -59,6 +61,11 @@
       return `"${string.replace(/ +/g,'\n')}"`
     }
 
+    function trouble (text, detail) {
+      // console.log(text,detail)
+      throw new Error(text + "\n" + detail)
+    }
+
     async function get (context) {
       if (context.name == context.page.title) {
         return context.page
@@ -83,34 +90,37 @@
         } else if (ir.match(/^[A-Z]/)) {
           console.log('eval',ir)
 
-          if (ir.match(/^DOT (strict )?digraph/)) {
-            context.graph = ir.replace(/DOT /,'')
-          }
-
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
             let tree = nest()
             links.map((link) => {
-              if (ir.match(/^LINKS HERE -> NODE/)) {
-                dot.push(`${quote(context.name)} -> ${quote(link)}`)
-              }
-              if (ir.match(/^LINKS NODE -> HERE/)) {
-                dot.push(`${quote(link)} -> ${quote(context.name)}`)
+              if (m = ir.match(/^LINKS HERE (->|--) NODE/)) {
+                dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
+              } else
+              if (m = ir.match(/^LINKS NODE (->|--) HERE/)) {
+                dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+              } else
+              if (!ir.match(/^LINKS$/)) {
+                trouble("can't do link", ir)
               }
               deeper.push({tree, context:Object.assign({},context,{name:link})})
             })
-          }
+          } else
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
             let page = await get(context)
             if (page) {
-              if (ir.match(/^HERE NODE/)) {
+              if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
-              }
+              } else
               if (ir.match(/^HERE NODE \w+/)) {
-                dot.push(`${quote(ir)} -> ${quote(context.name)} [style=dotted]`)
+                let kind = context.graph.match(/digraph/) ? '->' : '--'
+                dot.push(`${quote(ir)} ${kind} ${quote(context.name)} [style=dotted]`)
+              } else
+              if (!ir.match(/^HERE$/)) {
+                trouble("can't do here", ir)
               }
               deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
             }
@@ -120,7 +130,7 @@
                 deeper.push({tree, context})
               }
             }
-          }
+          } else
 
           if (ir.match(/^WHERE/)) {
             let tree = nest()
@@ -130,23 +140,21 @@
               want = want.filter(item => (item.text||'').match(regex))
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
-              debugger
               want = want.filter(item => item[attr])
-              console.log('want',want)
-            }
+            } else trouble("can't do where", ir)
             deeper.push({tree, context:Object.assign({},context,{want})})
-          }
+          } else
 
           if (ir.match(/^FAKE/)) {
-            if (ir.match(/^FAKE HERE -> NODE/)) {
-              dot.push(`${quote(context.name)} -> ${quote('post-'+context.name)}`)
-            }
-            if (ir.match(/^FAKE NODE -> HERE/)) {
-              dot.push(`${quote('pre-'+context.name)} -> ${quote(context.name)}`)
-            }
-          }
+            if (m = ir.match(/^FAKE HERE (->|--) NODE/)) {
+              dot.push(`${quote(context.name)} ${m[1]} ${quote('post-'+context.name)}`)
+            } else
+            if (m = ir.match(/^FAKE NODE (->|--) HERE/)) {
+              dot.push(`${quote('pre-'+context.name)} ${m[1]} ${quote(context.name)}`)
+            } else trouble("can't do fake", ir)
+          } else
 
-          if (ir.match(/^LINEUP/)) {
+          if (ir.match(/^LINEUP$/)) {
             let tree = nest()
             let $page = $item.parents('.page')
             let $lineup = $(`.page:lt(${$('.page').index($page)})`)
@@ -155,7 +163,7 @@
               let name = $(p).data('data').title
               deeper.push({tree, context:Object.assign({},context,{site, name})})
             })
-          }
+          } else trouble("can't do", ir)
 
         } else {
           console.log('eval',ir.toString())
@@ -220,14 +228,18 @@
     return `strict digraph {\n${dot.join("\n")}\n}`
   }
 
-
-  emit = ($item, item) => {
-    return $item.append(`
+  function message (text) {
+    return `
     <div class="viewer" data-item="viewer" style="width:98%">
       <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
-        <i>loading diagram</i>
+        <i>${text}</i>
       </div>
-    </div>`)
+    </div>`
+  }
+
+
+  emit = ($item, item) => {
+    return $item.append(message('loading diagram'))
   };
 
   bind = async function($item, item) {
@@ -235,27 +247,31 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
-    let dot = await makedot($item, item)
-    $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
-    let $viewer = $item.find('graphviz-viewer')
-    $viewer.dblclick(event => {
-      if(event.shiftKey) {
-        event.stopPropagation()
-        let svg = $item.find('graphviz-viewer').get(0)
-            .shadowRoot.querySelector('svg').cloneNode(true)
-        wiki.dialog('Graphviz', svg)
-      }
-    })
-    $viewer.get(0).render().then(svg => {
-      $(svg).find('.node').click((event)=> {
-        event.stopPropagation()
-        event.preventDefault()
-        let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
-        console.log('click',node)
-        let page = event.shiftKey ? null : $item.parents('.page')
-        wiki.doInternalLink(node, page)
+    try {
+      let dot = await makedot($item, item)
+      $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
+      let $viewer = $item.find('graphviz-viewer')
+      $viewer.dblclick(event => {
+        if(event.shiftKey) {
+          event.stopPropagation()
+          let svg = $item.find('graphviz-viewer').get(0)
+              .shadowRoot.querySelector('svg').cloneNode(true)
+          wiki.dialog('Graphviz', svg)
+        }
       })
-    })
+      $viewer.get(0).render().then(svg => {
+        $(svg).find('.node').click((event)=> {
+          event.stopPropagation()
+          event.preventDefault()
+          let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
+          console.log('click',node)
+          let page = event.shiftKey ? null : $item.parents('.page')
+          wiki.doInternalLink(node, page)
+        })
+      })
+    } catch (err) {
+      $item.html(message(err.message))
+    }
   };
 
   if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {

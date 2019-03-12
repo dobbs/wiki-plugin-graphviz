@@ -4,15 +4,21 @@ import Viz from './viz.js/viz.es.js'
 
 const template = document.createElement('template')
 template.innerHTML = `
-  <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
-    <i>drawing diagram</i>
-  </div>`
+    <div style="width:80%; padding:8px; color:gray; background-color:#eee; margin:0 auto; text-align:center">
+      <i id="message"></i>
+    </div>`
+
+function message (text) {
+  let div = template.content.cloneNode(true)
+  div.querySelector('#message').appendChild(document.createTextNode(text))
+  return div
+}
 
 class GraphvizViewer extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({mode: 'open'})
-    this.shadowRoot.appendChild(template.content.cloneNode(true))
+    this.shadowRoot.appendChild(message('drawing diagram'))
     this.workerURL = new URL('./viz.js/full.render.js', import.meta.url)
   }
 
@@ -24,11 +30,11 @@ class GraphvizViewer extends HTMLElement {
         return self.viz.renderSVGElement(self.decodedHTML())
           .then(svg => {
             svg.setAttribute('style', 'width: 100%; height: auto;')
-            self.shadowRoot.innerHTML = ``
-            self.shadowRoot.appendChild(svg)
+            self._replaceShadowRoot(svg)
             return svg
           })
           .then(resolve)
+          .catch(err => self._replaceShadowRoot(message(err.message)))
       })
     }
     return this.alreadyRendered
@@ -40,8 +46,7 @@ class GraphvizViewer extends HTMLElement {
       super.connectedCallback()
     this.render().catch(err => {
       console.log({err})
-      self.shadowRoot.innerHTML = `
-      <div style="background-color: red;"><p>Something went wrong</p><pre>${err}</pre></div>`
+      self._replaceShadowRoot(message(err.message))
     })
   }
 
@@ -51,6 +56,13 @@ class GraphvizViewer extends HTMLElement {
       .parseFromString(this.innerHTML, 'text/html')
       .documentElement
       .textContent
+  }
+
+  _replaceShadowRoot(el) {
+    // remove all child elements: https://stackoverflow.com/a/3955238/1074208
+    while(this.shadowRoot.firstChild)
+      this.shadowRoot.removeChild(this.shadowRoot.firstChild)
+    this.shadowRoot.appendChild(el)
   }
 }
 
