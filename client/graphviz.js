@@ -71,8 +71,7 @@
         return context.page
       } else {
         let slug = asSlug(context.name)
-        const res = await fetch(`//${context.site}/${slug}.json`)
-        return res.ok ? res.json() : null
+        return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
       }
     }
 
@@ -270,6 +269,7 @@
         })
       })
     } catch (err) {
+      console.log('makedot',err)
       $item.html(message(err.message))
     }
   };
