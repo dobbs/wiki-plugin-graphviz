@@ -15,10 +15,20 @@
   async function makedot($item, item) {
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
-    let text = item.text
-    if (text.match(/^DOT MEHAFFY$/)) {
-      return diagram ($item, item)
-    } else if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
+    var text = item.text
+    if (m = text.match(/^DOT ([a-z0-9-]+)$/)) {
+      let site = $item.parents('.page').data('site')||location.host
+      let slug = m[1]
+      let page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
+      if (page) {
+        item = page.story.find(item => item.type == 'graphviz')
+        if (item) {
+          console.log('redirect',site, slug, item)
+          text = item.text
+        }
+      }
+    }
+    if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
       root.shift()
       var $page = $item.parents('.page')
@@ -177,54 +187,6 @@
 
       return dot
     }
-  }
-
-  async function diagram ($item, item) {
-    let $page = $item.parents('.page')
-    let site = $page.data('site')||location.host
-    let slug = $page.attr('id')
-
-    const get = (url) => fetch(url).then(res => res.json())
-    const quote = (string) => `"${string.replace(/ +/g,'\n')}"`
-    const node = (title,color) => `${quote(title)} [fillcolor=${sites[asSlug(title)]?color:'lightgray'}]`
-    var sites = {}, sitemap = await get(`http://${site}/system/sitemap.json`)
-    sitemap.map (each => sites[each.slug] = each)
-
-    var dot = ['node [shape=box style=filled fillcolor=lightgray]','rankdir=LR']
-    var page = await get(`http://${site}/${slug}.json`)
-    const links = /\[\[(.+?)\]\]/g
-    while(more = links.exec(page.story[1].text)) {
-      let title = more[1]
-      console.log('title',title)
-      dot.push(node(title,'bisque'))
-      if(sites[asSlug(title)]) {
-        let page2 = await get(`http://growing.bay.wiki.org/${asSlug(title)}.json`)
-        for (var i = 0; i<page2.story.length; i++) {
-          let text2 = page2.story[i].text
-          const links2 = /\[\[(.+?)\]\]/g
-          if (text2.match(/^When /)) {
-            while(more2 = links2.exec(text2)) {
-              console.log('when',more2[1])
-              dot.push(node(more2[1],'lightblue'))
-              dot.push(`${quote(more2[1])} -> ${quote(title)}`)
-            }
-          }
-          if (text2.match(/^Then /)) {
-            while(more2 = links2.exec(text2)) {
-              console.log('then',more2[1])
-              dot.push(node(more2[1],'lightblue'))
-              dot.push(`${quote(title)} -> ${quote(more2[1])}`)
-            }
-          }
-        }
-      } else {
-        dot.push(`${quote('pre-'+title+'-one')} -> ${quote(title)}`)
-        dot.push(`${quote(title)} -> ${quote('post-'+title+'-one')}`)
-        dot.push(`${quote('pre-'+title+'-two')} -> ${quote(title)}`)
-        dot.push(`${quote(title)} -> ${quote('post-'+title+'-two')}`)
-      }
-    }
-    return `strict digraph {\n${dot.join("\n")}\n}`
   }
 
   function message (text) {

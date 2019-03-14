@@ -24,7 +24,7 @@
     {
       "type": "paragraph",
       "id": "c64dde6939acbd3b",
-      "text": "See [[Graphviz Markup Semantics]]"
+      "text": "See [[More About Algorithmic Markup]]"
     }
   ],
   "journal": [
@@ -109,6 +109,16 @@
       },
       "after": "80cc5dff781eba3c",
       "date": 1551848794479
+    },
+    {
+      "type": "edit",
+      "id": "c64dde6939acbd3b",
+      "item": {
+        "type": "paragraph",
+        "id": "c64dde6939acbd3b",
+        "text": "See [[More About Algorithmic Markup]]"
+      },
+      "date": 1552531092599
     }
   ]
 }
