@@ -16,7 +16,7 @@
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
     var text = item.text
-    if (m = text.match(/^DOT ([a-z0-9-]+)$/)) {
+    if (m = text.match(/^DOT FROM ([a-z0-9-]+)$/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
       let page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
