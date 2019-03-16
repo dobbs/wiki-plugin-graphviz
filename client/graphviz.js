@@ -126,7 +126,7 @@
             var page = null
             try {
               page = await get(context)
-            catch (err) {}
+            } catch (err) {}
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
