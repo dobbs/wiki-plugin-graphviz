@@ -81,7 +81,11 @@
         return context.page
       } else {
         let slug = asSlug(context.name)
-        return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
+        try {
+          return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
+        } catch (err) {
+          return null
+        }
       }
     }
 
