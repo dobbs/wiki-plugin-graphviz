@@ -123,7 +123,10 @@
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
-            let page = await get(context)
+            var page = null
+            try {
+              page = await get(context)
+            catch (err) {}
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
