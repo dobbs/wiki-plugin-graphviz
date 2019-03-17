@@ -16,20 +16,27 @@
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
     var text = item.text
-    if (m = text.match(/^DOT FROM ([a-z0-9-]+)$/)) {
+    if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
-      let page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
+      var page = null
+      try {
+        page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
+      } catch (err) {}
       if (page) {
-        item = page.story.find(item => item.type == 'graphviz')
-        if (item) {
-          console.log('redirect',site, slug, item)
-          text = item.text
+        redirect = page.story.find(each => each.type == 'graphviz')
+        if (redirect) {
+          console.log('redirect',site, slug, redirect)
+          text = redirect.text
         }
+      }
+      if (text == item.text) {
+        return trouble("can't do", item.text)
       }
     }
     if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
+      console.log('root',root)
       root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
