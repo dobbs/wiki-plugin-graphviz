@@ -1,0 +1,46 @@
+{
+  "title": "Lineup Diagram",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "6e9f50eaa26b6cc2",
+      "text": "We look back over the lineup to see where else we might have browsed. Search for this page when wanted."
+    },
+    {
+      "type": "graphviz",
+      "id": "cc079175949625ce",
+      "text": "DOT strict digraph\n  rankdir=LR\n  node [shape=box style=filled fillcolor=bisque]\n  LINEUP\n    HERE NODE\n  LINEUP\n    HERE\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE"
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "Lineup Diagram",
+        "story": []
+      },
+      "date": 1552704928499
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "6e9f50eaa26b6cc2",
+        "text": "We look back over the lineup to see where else we might have browsed. Search for this page when wanted."
+      },
+      "id": "6e9f50eaa26b6cc2",
+      "date": 1552704934814
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "graphviz",
+        "id": "cc079175949625ce",
+        "text": "DOT strict digraph\n  rankdir=LR\n  node [shape=box style=filled fillcolor=bisque]\n  LINEUP\n    HERE NODE\n  LINEUP\n    HERE\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE"
+      },
+      "after": "6e9f50eaa26b6cc2",
+      "id": "cc079175949625ce",
+      "date": 1552852475754
+    }
+  ]
+}
