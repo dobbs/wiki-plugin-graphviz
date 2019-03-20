@@ -1,0 +1,124 @@
+{
+  "title": "RegExp Metacharacters",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "6b1353c34f31c275",
+      "text": "We use the javascript implementation of RegExp to evaluate regular expressions. Most letters stand for themselves when matching but there are exceptions. Here is a list we have adapted from \"Learn RegEx\". [https://github.com/ziishaned/learn-regex#1-basic-matchers site]"
+    },
+    {
+      "type": "html",
+      "id": "dfe46ad3bc969cf2",
+      "text": "<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n<thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "RegExp Metacharacters",
+        "story": []
+      },
+      "date": 1552436512937
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "6b1353c34f31c275"
+      },
+      "id": "6b1353c34f31c275",
+      "type": "add",
+      "date": 1552436520614
+    },
+    {
+      "type": "edit",
+      "id": "6b1353c34f31c275",
+      "item": {
+        "type": "paragraph",
+        "id": "6b1353c34f31c275",
+        "text": "We use the javascript implementation of RegExp to evaluate regular expressions. Most letters stand for themselves when matching but there are exceptions. Here is a list we have adapted from Mozilla."
+      },
+      "date": 1552436642317
+    },
+    {
+      "type": "edit",
+      "id": "6b1353c34f31c275",
+      "item": {
+        "type": "paragraph",
+        "id": "6b1353c34f31c275",
+        "text": "We use the javascript implementation of RegExp to evaluate regular expressions. Most letters stand for themselves when matching but there are exceptions. Here is a list we have adapted from \"Learn RegEx\". [https://github.com/ziishaned/learn-regex#1-basic-matchers site]"
+      },
+      "date": 1552436710753
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "dfe46ad3bc969cf2"
+      },
+      "id": "dfe46ad3bc969cf2",
+      "type": "add",
+      "after": "6b1353c34f31c275",
+      "date": 1552436799687
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": "<thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552436804264
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": " <thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552436832687
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": "<table> <thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552436843414
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": "<table><thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552436867263
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": "<table border=\"1\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n<thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552437057357
+    },
+    {
+      "type": "edit",
+      "id": "dfe46ad3bc969cf2",
+      "item": {
+        "type": "html",
+        "id": "dfe46ad3bc969cf2",
+        "text": "<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n<thead>\n<tr>\n<th align=\"center\">Meta character</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td align=\"center\">.</td>\n<td>Period matches any single character except a line break.</td>\n</tr>\n<tr>\n<td align=\"center\">[ ]</td>\n<td>Character class. Matches any character contained between the square brackets.</td>\n</tr>\n<tr>\n<td align=\"center\">[^ ]</td>\n<td>Negated character class. Matches any character that is not contained between the square brackets</td>\n</tr>\n<tr>\n<td align=\"center\">*</td>\n<td>Matches 0 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">+</td>\n<td>Matches 1 or more repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">?</td>\n<td>Makes the preceding symbol optional.</td>\n</tr>\n<tr>\n<td align=\"center\">{n,m}</td>\n<td>Braces. Matches at least \"n\" but not more than \"m\" repetitions of the preceding symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">(xyz)</td>\n<td>Character group. Matches the characters xyz in that exact order.</td>\n</tr>\n<tr>\n<td align=\"center\">|</td>\n<td>Alternation. Matches either the characters before or the characters after the symbol.</td>\n</tr>\n<tr>\n<td align=\"center\">\\</td>\n<td>Escapes the next character. This allows you to match reserved characters <code>[ ] ( ) { } . * + ? ^ $ \\ |</code></td>\n</tr>\n<tr>\n<td align=\"center\">^</td>\n<td>Matches the beginning of the input.</td>\n</tr>\n<tr>\n<td align=\"center\">$</td>\n<td>Matches the end of the input.</td>\n</tr>\n</tbody>"
+      },
+      "date": 1552437070400
+    }
+  ]
+}
