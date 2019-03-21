@@ -34,7 +34,7 @@ class GraphvizViewer extends HTMLElement {
             return svg
           })
           .then(resolve)
-          .catch(err => self._replaceShadowRoot(message(err.message)))
+          .catch(err => {console.log('render',err); self._replaceShadowRoot(message(err.message))})
       })
     }
     return this.alreadyRendered

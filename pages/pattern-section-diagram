@@ -1,0 +1,90 @@
+{
+  "title": "Pattern Section Diagram",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "4d9fd4e70d5b76f2",
+      "text": "We draw patterns within a section, when and then paragraphs of each of these, and then the see more link to the sections containing each of these."
+    },
+    {
+      "type": "paragraph",
+      "id": "11cc595de4dfbd25",
+      "text": "This rendering pioneered for A Pattern Language for Growing Regions by Michael Mehaffy."
+    },
+    {
+      "type": "graphviz",
+      "id": "4f44f0b8783ae716",
+      "text": "DOT strict digraph\n  node [shape=box style=filled fillcolor=bisque penwidth=3 color=brown]\n  HERE NODE\n    WHERE /^- /\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE\n        node [fillcolor=palegreen penwidth=1 color=black]\n        HERE NODE\n          WHERE /^When/\n            LINKS NODE -> HERE\n              HERE NODE\n                node [fillcolor=bisque]\n                WHERE /^See more/\n                  node [fillcolor=bisque]\n                  LINKS NODE -> HERE\n              ELSE\n                node [fillcolor=lightgray]\n                FAKE NODE -> HERE\n          WHERE /^Then/\n            node [fillcolor=palegreen]\n            LINKS HERE -> NODE\n              HERE NODE\n                node [fillcolor=bisque]\n                WHERE /^See more/\n                  node [fillcolor=bisque]\n                  LINKS NODE -> HERE\n              ELSE\n                node [fillcolor=lightgray]\n                FAKE HERE -> NODE"
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "Pattern Section Diagram",
+        "story": []
+      },
+      "date": 1552531294229
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "4d9fd4e70d5b76f2"
+      },
+      "id": "4d9fd4e70d5b76f2",
+      "type": "add",
+      "date": 1552531343770
+    },
+    {
+      "type": "edit",
+      "id": "4d9fd4e70d5b76f2",
+      "item": {
+        "type": "paragraph",
+        "id": "4d9fd4e70d5b76f2",
+        "text": "We draw patterns within a section, when and then paragraphs of each of these, and then the see more link to the sections containing each of these."
+      },
+      "date": 1552531467546
+    },
+    {
+      "type": "add",
+      "id": "11cc595de4dfbd25",
+      "item": {
+        "type": "paragraph",
+        "id": "11cc595de4dfbd25",
+        "text": "This rendering pioneered for A Pattern Language for Growing Regions by Michael Mehaffy."
+      },
+      "after": "4d9fd4e70d5b76f2",
+      "date": 1552531509665
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "4f44f0b8783ae716"
+      },
+      "id": "4f44f0b8783ae716",
+      "type": "add",
+      "after": "11cc595de4dfbd25",
+      "date": 1552531522376
+    },
+    {
+      "type": "edit",
+      "id": "4f44f0b8783ae716",
+      "item": {
+        "type": "graphviz",
+        "id": "4f44f0b8783ae716",
+        "text": "Pattern Section Diagram"
+      },
+      "date": 1552531538447
+    },
+    {
+      "type": "edit",
+      "id": "4f44f0b8783ae716",
+      "item": {
+        "type": "graphviz",
+        "id": "4f44f0b8783ae716",
+        "text": "DOT strict digraph\n  node [shape=box style=filled fillcolor=bisque penwidth=3 color=brown]\n  HERE NODE\n    WHERE /^- /\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE\n        node [fillcolor=palegreen penwidth=1 color=black]\n        HERE NODE\n          WHERE /^When/\n            LINKS NODE -> HERE\n              HERE NODE\n                node [fillcolor=bisque]\n                WHERE /^See more/\n                  node [fillcolor=bisque]\n                  LINKS NODE -> HERE\n              ELSE\n                node [fillcolor=lightgray]\n                FAKE NODE -> HERE\n          WHERE /^Then/\n            node [fillcolor=palegreen]\n            LINKS HERE -> NODE\n              HERE NODE\n                node [fillcolor=bisque]\n                WHERE /^See more/\n                  node [fillcolor=bisque]\n                  LINKS NODE -> HERE\n              ELSE\n                node [fillcolor=lightgray]\n                FAKE HERE -> NODE"
+      },
+      "date": 1552531553080
+    }
+  ]
+}

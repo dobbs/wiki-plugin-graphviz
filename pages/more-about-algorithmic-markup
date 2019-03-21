@@ -1,0 +1,2052 @@
+{
+  "title": "More About Algorithmic Markup",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "09c8b5dd79bcb1fc",
+      "text": "The Graphviz plugin accepts an unusual dialect of markup which is really a computer algorithm for visiting pages and drawing what it finds. We'll explain this in simple terms that should get one going quickly."
+    },
+    {
+      "type": "markdown",
+      "id": "314af817b9207cfd",
+      "text": "# Hello"
+    },
+    {
+      "type": "paragraph",
+      "id": "9ac4d4d95d89f17f",
+      "text": "It is good to start the description of any new computer language with instructions for printing \"Hello World\"."
+    },
+    {
+      "type": "paragraph",
+      "id": "1da0d77ce31d39e5",
+      "text": "This shows the name of the current page as a single node."
+    },
+    {
+      "type": "code",
+      "id": "b3701802bcca51f0",
+      "text": "DOT digraph\n  HERE NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "0dc972061547c73c",
+      "text": "Create a page named [[Hello World]] and add a Graphviz plugin with this markup. This says, pay attention to where the plugin is at, HERE, and add a NODE to the graph representing that place."
+    },
+    {
+      "type": "paragraph",
+      "id": "2f6d2789e0d648a1",
+      "text": "Notice that the second line is indented. We normally indent with two space for each new level of indentation."
+    },
+    {
+      "type": "paragraph",
+      "id": "23bbbbea40f60224",
+      "text": "The first line says this markup uses the special markrup keywords we describe here to find places in the wiki and draw pictures of them. Digraph means \"directional graph\" with arrow heads on the lines. A graph consists of shapes and lines which are called nodes and edges in the Graphviz vernacular."
+    },
+    {
+      "type": "markdown",
+      "id": "8035541b1316a395",
+      "text": "# Links"
+    },
+    {
+      "type": "paragraph",
+      "id": "32b80b30893ededa",
+      "text": "Let's say we add some links to the hello word page by writing a paragraphs which links to pages that might be named Peace and Love. Internal links appear in double-square brackets."
+    },
+    {
+      "type": "code",
+      "id": "73ff5445a9852031",
+      "text": "May the world find [[Peace]] and [[Love]]."
+    },
+    {
+      "type": "paragraph",
+      "id": "73ddf1bb8b33d27d",
+      "text": "We don't need to actually create these pages in order to say that there are links to Peace and Love. Likewise if we want to show the links present on any page we can do that with the LINKS keyword that finds internal links enclosed in double-square brackets."
+    },
+    {
+      "type": "code",
+      "id": "d48bd4a04e5b4fb5",
+      "text": "DOT digraph\n  HERE NODE\n    LINKS HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "2dc882926ab4cab3",
+      "text": "If we revise the Graphviz plugin on the Hello World page to add the LINKS keywords, then our graph will show arrows from Hello World to Peace and to Love. There will be three nodes and two directed edges."
+    },
+    {
+      "type": "markdown",
+      "id": "3889ff7153a7b027",
+      "text": "# Variations"
+    },
+    {
+      "type": "paragraph",
+      "id": "196af57f130c5c60",
+      "text": "We can draw undirected graphs where the edges don't have arrowheads. Notice two changes."
+    },
+    {
+      "type": "code",
+      "id": "3ad12b542fd236fd",
+      "text": "DOT graph\n  HERE NODE\n    LINKS HERE -- NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "11a97385f675b2f7",
+      "text": "We can ask that identical edges not be duplicated in the diagram even if we add them multiple times."
+    },
+    {
+      "type": "code",
+      "id": "fd62caace4902dd1",
+      "text": "DOT strict digraph"
+    },
+    {
+      "type": "code",
+      "id": "98b51a02966dacf0",
+      "text": "DOT strict graph"
+    },
+    {
+      "type": "paragraph",
+      "id": "28479e60403ce727",
+      "text": "Graphviz orders nodes into ranks top to bottom based on the edges that connect them. Change this option first thing to have it draw left to right. This works better for diagrams that are wider than they are tall."
+    },
+    {
+      "type": "code",
+      "id": "382ea81b8740b496",
+      "text": "rankdir=LR"
+    },
+    {
+      "type": "paragraph",
+      "id": "a04bcbf9318e2f8d",
+      "text": "Graphviz has other layout algorithms that may be useful in special cases. If a diagram has no important top or bottom a mass and tension style layout may work better. [https://graphviz.gitlab.io/_pages/pdf/neatoguide.pdf pdf]"
+    },
+    {
+      "type": "code",
+      "id": "28a4537d6acb8bf9",
+      "text": "layout=neato"
+    },
+    {
+      "type": "markdown",
+      "id": "f314c17ba8ff4ca9",
+      "text": "# Context"
+    },
+    {
+      "type": "paragraph",
+      "id": "ec89deb967dffee7",
+      "text": "Each time we indent our keywords further establish a new context for extending our diagram. Each time we say NODE or show an edge, ->, we are adding to our diagram based on where we are right then."
+    },
+    {
+      "type": "paragraph",
+      "id": "6488bcaaad82f0df",
+      "text": "The LINKS keyword finds links that might lead new places. We can explore those places by indenting more keywords under the LINKS."
+    },
+    {
+      "type": "code",
+      "id": "05fc6440b6d12721",
+      "text": "DOT digraph\n  HERE NODE\n    LINKS HERE -> NODE\n      HERE NODE\n        LINKS HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "417600ef5167a73d",
+      "text": "Each keyword establishes the context for the keywords indented underneath it. HERE says as as long as I am here, I might as well fetch the page here. If there isn't a page yet, HERE skips the markup indented underneath it. "
+    },
+    {
+      "type": "paragraph",
+      "id": "c909efeee8c075d1",
+      "text": "HERE NODE will only draw a node if there is a page by the name established in the context above it."
+    },
+    {
+      "type": "paragraph",
+      "id": "69eab0b5b0998a31",
+      "text": "One can move through a wiki without drawing nodes and edges based on what it finds."
+    },
+    {
+      "type": "code",
+      "id": "b9ce862c53001200",
+      "text": "DOt digraph\n  HERE\n    LINKS\n      HERE\n        LINKS"
+    },
+    {
+      "type": "paragraph",
+      "id": "98aabf64ce998167",
+      "text": "You might see keywords arranged this way if the the algorithm were to find pages a couple of links away and then start drawing nodes and edges. But without drawing eventually, what's the point of traveling."
+    },
+    {
+      "type": "paragraph",
+      "id": "44899e45ba237ce6",
+      "text": "A simple reminder: Lines that include NODE can draw, those without can't. This rule is helpful understanding where to add shape and color."
+    },
+    {
+      "type": "markdown",
+      "id": "6f02c017b4a0f5e4",
+      "text": "# Selectivity"
+    },
+    {
+      "type": "paragraph",
+      "id": "b4fa7ff9a52f5d10",
+      "text": "We can be more specific about where on a page we are looking for links. Between the time we fetch a page with HERE and look for links with LINKS we can choose some subset of paragraphs here where we want to look for links. Maybe that paragraph begins \"See also ...\""
+    },
+    {
+      "type": "code",
+      "id": "d29f7ee447a35140",
+      "text": "DOT digraph\n  HERE NODE\n    WHERE /^See also/\n      LINKS HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "cba3a6556d3e1ee3",
+      "text": "This variation of markup we have already seen will look for links only on paragraphs here that begin \"See also\"."
+    },
+    {
+      "type": "paragraph",
+      "id": "febc163adc88c8ed",
+      "text": "The / / marks bound a \"regular expression\" string match where ^ means starts-with and the rest are required characters. See [[RegExp Metacharacters]]"
+    },
+    {
+      "type": "markdown",
+      "id": "cb6d9d6081de0f78",
+      "text": "# Appearance"
+    },
+    {
+      "type": "paragraph",
+      "id": "c9aec39f47845748",
+      "text": "The Graphviz input language, dot, offers many options for shape, style and color of both nodes and edges. We include these in markup between lines that begin with keywords. Options applying to nodes or edges begin with these words in lowercase.  [https://graphviz.gitlab.io/_pages/doc/info/lang.html language] [https://graphviz.gitlab.io/_pages/doc/info/attrs.html options]"
+    },
+    {
+      "type": "code",
+      "id": "699184fba04b4512",
+      "text": "node [option=value]\nedge [option=value]"
+    },
+    {
+      "type": "paragraph",
+      "id": "753d46fb1fd7a869",
+      "text": "We often begin by choosing square shapes filled with pastel colors."
+    },
+    {
+      "type": "code",
+      "id": "f3da7cf83b1eb736",
+      "text": "DOT digraph\n  node [shape=box style=filled fillcolor=pagegreen]"
+    },
+    {
+      "type": "paragraph",
+      "id": "f5a20daa6badf3ad",
+      "text": "As we link further into the wiki we may choose another color to emphasize our new kind of pages."
+    },
+    {
+      "type": "code",
+      "id": "a057ec281c754b8e",
+      "text": "    HERE NODE\n      node [fillcolor=lightblue]\n      LINKS HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "7f4ee3805ade1517",
+      "text": "Notice that HERE creates a new context and we begin that context with the dot color we choose for new nodes encountered at that level."
+    },
+    {
+      "type": "paragraph",
+      "id": "8242a17bfcde9fce",
+      "text": "Our favorite fillcolors are palegreen, lightblue, bisque and gold. If you find a Graphviz diagram you like, double-click to edit and see what shapes and colors it uses."
+    },
+    {
+      "type": "paragraph",
+      "id": "53987530646a72a2",
+      "text": "Graphviz has its own rules for how options extend over the nodes subsequently created. We accommodate it by running all of the keywords at one indent before entering and processing keyword contexts at deeper indents."
+    },
+    {
+      "type": "markdown",
+      "id": "059ae274375b65c4",
+      "text": "# Method"
+    },
+    {
+      "type": "paragraph",
+      "id": "638de09f89ab38dc",
+      "text": "Start every new diagram with just a few lines of markup just as we have here. Test this in place with pages and links you understand. Avoid pages with too many links or add WHERE keywords to select only the important ones."
+    },
+    {
+      "type": "paragraph",
+      "id": "452f0eba971bd7ff",
+      "text": "Add new keywords in the context of ones you already understand. If new keywords don't work at first try simpler ones just to get something to draw. If things get really messed up, fork an earlier working version from Journal history."
+    },
+    {
+      "type": "paragraph",
+      "id": "c48a929a8794d42a",
+      "text": "If you think you have a diagram working, try dragging it into new locations in the federation and see how it works there. If a drawing fails completely look for console.log messages in the browser's debugger."
+    },
+    {
+      "type": "paragraph",
+      "id": "764ab9a339cab799",
+      "text": "It can be confusing to get colors to apply correctly. Try adding a distinguishable shape or color at each indent level and then removing those that seem unnecessary."
+    },
+    {
+      "type": "markdown",
+      "id": "3406492c2b56f2ed",
+      "text": "# More"
+    },
+    {
+      "type": "paragraph",
+      "id": "0700513e841da528",
+      "text": "A more complete list of keywords with more precise definitions can be found in [[Graphviz Markup Semantics]]. Start here first."
+    },
+    {
+      "type": "paragraph",
+      "id": "c7d17160645d6157",
+      "text": "You can look through the federation for where Graphviz plugins are used and then try to make sense of the markup that works for them."
+    },
+    {
+      "type": "search",
+      "id": "b21738a7629139ed",
+      "text": "SEARCH PLUGINS graphviz"
+    },
+    {
+      "type": "paragraph",
+      "id": "ce134343126fdbfd",
+      "text": "Algorithmic markup is improving regularly. Be sure you have a recent release of the plugin."
+    },
+    {
+      "type": "plugmatic",
+      "id": "989898d2fd8ff782",
+      "text": "wiki-plugin-graphviz"
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "More About Algorithmic Markup",
+        "story": []
+      },
+      "date": 1552431873978
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "09c8b5dd79bcb1fc"
+      },
+      "id": "09c8b5dd79bcb1fc",
+      "type": "add",
+      "date": 1552431878506
+    },
+    {
+      "type": "edit",
+      "id": "09c8b5dd79bcb1fc",
+      "item": {
+        "type": "paragraph",
+        "id": "09c8b5dd79bcb1fc",
+        "text": "The Graphviz plugin accepts an unusual dialect of markup which is really a computer algorithm for visiting pages and drawing what it finds. We'll explain this in simple terms that should get one going quickly."
+      },
+      "date": 1552432083940
+    },
+    {
+      "type": "add",
+      "id": "314af817b9207cfd",
+      "item": {
+        "type": "paragraph",
+        "id": "314af817b9207cfd",
+        "text": "# Hello"
+      },
+      "after": "09c8b5dd79bcb1fc",
+      "date": 1552432095694
+    },
+    {
+      "type": "add",
+      "id": "9ac4d4d95d89f17f",
+      "item": {
+        "type": "paragraph",
+        "id": "9ac4d4d95d89f17f",
+        "text": "It is good to start the description of any new computer language with instructions for printing \"Hello World\"."
+      },
+      "after": "314af817b9207cfd",
+      "date": 1552432211823
+    },
+    {
+      "type": "add",
+      "id": "1da0d77ce31d39e5",
+      "item": {
+        "type": "paragraph",
+        "id": "1da0d77ce31d39e5",
+        "text": "This shows the name of the current page as a single node."
+      },
+      "after": "9ac4d4d95d89f17f",
+      "date": 1552432283934
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "b3701802bcca51f0"
+      },
+      "id": "b3701802bcca51f0",
+      "type": "add",
+      "after": "1da0d77ce31d39e5",
+      "date": 1552432287651
+    },
+    {
+      "type": "edit",
+      "id": "b3701802bcca51f0",
+      "item": {
+        "type": "code",
+        "id": "b3701802bcca51f0",
+        "text": "DOT digraph\n  HERE NODE"
+      },
+      "date": 1552432310023
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "0dc972061547c73c"
+      },
+      "id": "0dc972061547c73c",
+      "type": "add",
+      "after": "b3701802bcca51f0",
+      "date": 1552432339509
+    },
+    {
+      "type": "edit",
+      "id": "0dc972061547c73c",
+      "item": {
+        "type": "paragraph",
+        "id": "0dc972061547c73c",
+        "text": "Create a page named [[Hello Word]] and add a Graphviz plugin with this markup. This says, pay attention to where the plugin is at, HERE, and add a NODE to the graph representing that place."
+      },
+      "date": 1552432462729
+    },
+    {
+      "type": "add",
+      "id": "2f6d2789e0d648a1",
+      "item": {
+        "type": "paragraph",
+        "id": "2f6d2789e0d648a1",
+        "text": "Notice that the second line is indented. We normally indent with two space for each new level of indentation."
+      },
+      "after": "0dc972061547c73c",
+      "date": 1552432510528
+    },
+    {
+      "type": "edit",
+      "id": "0dc972061547c73c",
+      "item": {
+        "type": "paragraph",
+        "id": "0dc972061547c73c",
+        "text": "Create a page named [[Hello World]] and add a Graphviz plugin with this markup. This says, pay attention to where the plugin is at, HERE, and add a NODE to the graph representing that place."
+      },
+      "date": 1552432592285
+    },
+    {
+      "type": "add",
+      "id": "23bbbbea40f60224",
+      "item": {
+        "type": "paragraph",
+        "id": "23bbbbea40f60224",
+        "text": "The first line says this markup uses the special markrup keywords we describe here to find places in the wiki and draw pictures of them. Digraph means \"directional graph\" with arrow heads on the lines. A graph consists of shapes and lines which are called nodes and edges in the Graphviz vernacular."
+      },
+      "after": "2f6d2789e0d648a1",
+      "date": 1552432845056
+    },
+    {
+      "type": "add",
+      "id": "8035541b1316a395",
+      "item": {
+        "type": "paragraph",
+        "id": "8035541b1316a395",
+        "text": "# Links"
+      },
+      "after": "23bbbbea40f60224",
+      "date": 1552432909698
+    },
+    {
+      "type": "add",
+      "id": "32b80b30893ededa",
+      "item": {
+        "type": "paragraph",
+        "id": "32b80b30893ededa",
+        "text": "Let's say we add some links to the hello word page by writing a paragraphs which links to pages that might be named Peace and Love. Internal links appear in double-square brackets."
+      },
+      "after": "8035541b1316a395",
+      "date": 1552433010792
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "73ff5445a9852031"
+      },
+      "id": "73ff5445a9852031",
+      "type": "add",
+      "after": "32b80b30893ededa",
+      "date": 1552433014241
+    },
+    {
+      "type": "edit",
+      "id": "73ff5445a9852031",
+      "item": {
+        "type": "code",
+        "id": "73ff5445a9852031",
+        "text": "May the world find [[Peace]] and [[Love]]."
+      },
+      "date": 1552433044107
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "73ddf1bb8b33d27d"
+      },
+      "id": "73ddf1bb8b33d27d",
+      "type": "add",
+      "after": "73ff5445a9852031",
+      "date": 1552433060156
+    },
+    {
+      "type": "edit",
+      "id": "73ddf1bb8b33d27d",
+      "item": {
+        "type": "paragraph",
+        "id": "73ddf1bb8b33d27d",
+        "text": "We don't need to actually create these pages in order to say that there are links to Peace and Love. Likewise if we want to show the links present on any page we can do that with the LINKS keyword that finds internal links enclosed in double-square brackets."
+      },
+      "date": 1552433171039
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "d48bd4a04e5b4fb5"
+      },
+      "id": "d48bd4a04e5b4fb5",
+      "type": "add",
+      "after": "73ddf1bb8b33d27d",
+      "date": 1552433174169
+    },
+    {
+      "type": "edit",
+      "id": "d48bd4a04e5b4fb5",
+      "item": {
+        "type": "code",
+        "id": "d48bd4a04e5b4fb5",
+        "text": "DOT digraph\n  HERE NODE\n    LINKS HERE -> NODE"
+      },
+      "date": 1552433232914
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "2dc882926ab4cab3"
+      },
+      "id": "2dc882926ab4cab3",
+      "type": "add",
+      "after": "d48bd4a04e5b4fb5",
+      "date": 1552433240175
+    },
+    {
+      "type": "edit",
+      "id": "314af817b9207cfd",
+      "item": {
+        "type": "markdown",
+        "id": "314af817b9207cfd",
+        "text": "# Hello"
+      },
+      "date": 1552433389551
+    },
+    {
+      "type": "edit",
+      "id": "8035541b1316a395",
+      "item": {
+        "type": "markdown",
+        "id": "8035541b1316a395",
+        "text": "# Links"
+      },
+      "date": 1552433394267
+    },
+    {
+      "type": "edit",
+      "id": "2dc882926ab4cab3",
+      "item": {
+        "type": "paragraph",
+        "id": "2dc882926ab4cab3",
+        "text": "If we revise the Graphviz plugin on the Hello World page to add the LINKS keywords, then our graph will show arrows from Hello World to Peace and to Love. There will be three nodes and two directed edges."
+      },
+      "date": 1552433418635
+    },
+    {
+      "type": "add",
+      "id": "f314c17ba8ff4ca9",
+      "item": {
+        "type": "paragraph",
+        "id": "f314c17ba8ff4ca9",
+        "text": "# Context"
+      },
+      "after": "2dc882926ab4cab3",
+      "date": 1552433535120
+    },
+    {
+      "type": "add",
+      "id": "ec89deb967dffee7",
+      "item": {
+        "type": "paragraph",
+        "id": "ec89deb967dffee7",
+        "text": "Each time we indent our keywords further establish a new context for extending our diagram. Each time we say NODE or show an edge, ->, we are adding to our diagram based on where we are right then."
+      },
+      "after": "f314c17ba8ff4ca9",
+      "date": 1552433790203
+    },
+    {
+      "type": "add",
+      "id": "6488bcaaad82f0df",
+      "item": {
+        "type": "paragraph",
+        "id": "6488bcaaad82f0df",
+        "text": "The LINKS keyword finds links that might lead new places. We can explore those places by indenting more keywords under the LINKS."
+      },
+      "after": "ec89deb967dffee7",
+      "date": 1552433876614
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "05fc6440b6d12721"
+      },
+      "id": "05fc6440b6d12721",
+      "type": "add",
+      "after": "6488bcaaad82f0df",
+      "date": 1552433910577
+    },
+    {
+      "type": "edit",
+      "id": "05fc6440b6d12721",
+      "item": {
+        "type": "code",
+        "id": "05fc6440b6d12721",
+        "text": "DOT digraph\n  HERE NODE\n    LINKS HERE -> NODE\n      HERE NODE\n        LINKS HERE -> NODE"
+      },
+      "date": 1552434086851
+    },
+    {
+      "type": "edit",
+      "id": "f314c17ba8ff4ca9",
+      "item": {
+        "type": "markdown",
+        "id": "f314c17ba8ff4ca9",
+        "text": "# Context"
+      },
+      "date": 1552434120310
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "417600ef5167a73d"
+      },
+      "id": "417600ef5167a73d",
+      "type": "add",
+      "after": "05fc6440b6d12721",
+      "date": 1552434134827
+    },
+    {
+      "type": "edit",
+      "id": "417600ef5167a73d",
+      "item": {
+        "type": "paragraph",
+        "id": "417600ef5167a73d",
+        "text": "Each keyword establishes the context for the keywords indented underneath it. HERE says as as long as I am here, I might as well fetch the page here. If there isn't a page yet, HERE skips the markup indented underneath it. "
+      },
+      "date": 1552434340143
+    },
+    {
+      "type": "add",
+      "id": "c909efeee8c075d1",
+      "item": {
+        "type": "paragraph",
+        "id": "c909efeee8c075d1",
+        "text": "HERE NODE will only draw a node if there is a page by the name established in the context above it."
+      },
+      "after": "417600ef5167a73d",
+      "date": 1552434416131
+    },
+    {
+      "type": "add",
+      "id": "69eab0b5b0998a31",
+      "item": {
+        "type": "paragraph",
+        "id": "69eab0b5b0998a31",
+        "text": "One can move through a wiki without drawing nodes and edges based on what it finds."
+      },
+      "after": "c909efeee8c075d1",
+      "date": 1552434553326
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "b9ce862c53001200"
+      },
+      "id": "b9ce862c53001200",
+      "type": "add",
+      "after": "69eab0b5b0998a31",
+      "date": 1552434557374
+    },
+    {
+      "type": "edit",
+      "id": "b9ce862c53001200",
+      "item": {
+        "type": "code",
+        "id": "b9ce862c53001200",
+        "text": "DOt digraph\n  HERE\n    LINKS\n      HERE\n        LINKS"
+      },
+      "date": 1552434599766
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "98aabf64ce998167"
+      },
+      "id": "98aabf64ce998167",
+      "type": "add",
+      "after": "b9ce862c53001200",
+      "date": 1552434629499
+    },
+    {
+      "type": "edit",
+      "id": "98aabf64ce998167",
+      "item": {
+        "type": "paragraph",
+        "id": "98aabf64ce998167",
+        "text": "You might see keywords arranged this way if the the algorithm were to find pages a couple of links away and then start drawing nodes and edges. But without drawing eventually, what's the point of traveling."
+      },
+      "date": 1552434740114
+    },
+    {
+      "type": "add",
+      "id": "6f02c017b4a0f5e4",
+      "item": {
+        "type": "paragraph",
+        "id": "6f02c017b4a0f5e4",
+        "text": "# Specifics"
+      },
+      "after": "98aabf64ce998167",
+      "date": 1552434909706
+    },
+    {
+      "type": "add",
+      "id": "b4fa7ff9a52f5d10",
+      "item": {
+        "type": "paragraph",
+        "id": "b4fa7ff9a52f5d10",
+        "text": "We can be more specific about where on a page we are looking for links. Between the time we fetch a page with HERE and look for links with LINKS we can choose some subset of paragraphs here where we want to look for links. Maybe that paragraph begins \"See also ...\""
+      },
+      "after": "6f02c017b4a0f5e4",
+      "date": 1552435161364
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "d29f7ee447a35140"
+      },
+      "id": "d29f7ee447a35140",
+      "type": "add",
+      "after": "b4fa7ff9a52f5d10",
+      "date": 1552435180857
+    },
+    {
+      "type": "edit",
+      "id": "d29f7ee447a35140",
+      "item": {
+        "type": "code",
+        "id": "d29f7ee447a35140",
+        "text": "DOT digraph\n  HERE NODE\n    WHERE /^See also/\n      LINKS HERE -> NODE"
+      },
+      "date": 1552435275362
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "cba3a6556d3e1ee3"
+      },
+      "id": "cba3a6556d3e1ee3",
+      "type": "add",
+      "after": "d29f7ee447a35140",
+      "date": 1552435280276
+    },
+    {
+      "type": "edit",
+      "id": "cba3a6556d3e1ee3",
+      "item": {
+        "type": "paragraph",
+        "id": "cba3a6556d3e1ee3",
+        "text": "This variation of markup we have already seen will look for links only on paragraphs here that begin \"See also\"."
+      },
+      "date": 1552435354932
+    },
+    {
+      "type": "add",
+      "id": "febc163adc88c8ed",
+      "item": {
+        "type": "paragraph",
+        "id": "febc163adc88c8ed",
+        "text": "The / / marks bound a \"regular expression\" string match where ^ means starts-with and the rest are required characters."
+      },
+      "after": "cba3a6556d3e1ee3",
+      "date": 1552435655572
+    },
+    {
+      "type": "edit",
+      "id": "6f02c017b4a0f5e4",
+      "item": {
+        "type": "markdown",
+        "id": "6f02c017b4a0f5e4",
+        "text": "# Specifics"
+      },
+      "date": 1552435665308
+    },
+    {
+      "type": "add",
+      "id": "44899e45ba237ce6",
+      "item": {
+        "type": "paragraph",
+        "id": "44899e45ba237ce6",
+        "text": "A simple reminder: Lines that include NODE, draw, those without, don't."
+      },
+      "after": "98aabf64ce998167",
+      "date": 1552435912548
+    },
+    {
+      "type": "edit",
+      "id": "44899e45ba237ce6",
+      "item": {
+        "type": "paragraph",
+        "id": "44899e45ba237ce6",
+        "text": "A simple reminder: Lines that include NODE draw, those without don't."
+      },
+      "date": 1552435924819
+    },
+    {
+      "type": "edit",
+      "id": "44899e45ba237ce6",
+      "item": {
+        "type": "paragraph",
+        "id": "44899e45ba237ce6",
+        "text": "A simple reminder: Lines that include NODE can draw, those without can't."
+      },
+      "date": 1552435973321
+    },
+    {
+      "type": "edit",
+      "id": "44899e45ba237ce6",
+      "item": {
+        "type": "paragraph",
+        "id": "44899e45ba237ce6",
+        "text": "A simple reminder: Lines that include NODE can draw, those without can't. This rule is helpful when it comes to adding shape and color."
+      },
+      "date": 1552436006960
+    },
+    {
+      "type": "edit",
+      "id": "44899e45ba237ce6",
+      "item": {
+        "type": "paragraph",
+        "id": "44899e45ba237ce6",
+        "text": "A simple reminder: Lines that include NODE can draw, those without can't. This rule is helpful understanding where to add shape and color."
+      },
+      "date": 1552436031423
+    },
+    {
+      "type": "edit",
+      "id": "febc163adc88c8ed",
+      "item": {
+        "type": "paragraph",
+        "id": "febc163adc88c8ed",
+        "text": "The / / marks bound a \"regular expression\" string match where ^ means starts-with and the rest are required characters. See [RegExp Metacharacters]]"
+      },
+      "date": 1552436472203
+    },
+    {
+      "type": "edit",
+      "id": "febc163adc88c8ed",
+      "item": {
+        "type": "paragraph",
+        "id": "febc163adc88c8ed",
+        "text": "The / / marks bound a \"regular expression\" string match where ^ means starts-with and the rest are required characters. See [[RegExp Metacharacters]]"
+      },
+      "date": 1552436480152
+    },
+    {
+      "type": "add",
+      "id": "cb6d9d6081de0f78",
+      "item": {
+        "type": "paragraph",
+        "id": "cb6d9d6081de0f78",
+        "text": "# Appearance"
+      },
+      "after": "febc163adc88c8ed",
+      "date": 1552437629165
+    },
+    {
+      "type": "add",
+      "id": "c9aec39f47845748",
+      "item": {
+        "type": "paragraph",
+        "id": "c9aec39f47845748",
+        "text": "The Graphviz input language, dot, offers many options for shape, style and color of both nodes and edges. We include these in markup between lines that begin with keywords. Options applying to nodes or edges begin with these words in lowercase. "
+      },
+      "after": "cb6d9d6081de0f78",
+      "date": 1552437886089
+    },
+    {
+      "type": "edit",
+      "id": "cb6d9d6081de0f78",
+      "item": {
+        "type": "markdown",
+        "id": "cb6d9d6081de0f78",
+        "text": "# Appearance"
+      },
+      "date": 1552437891967
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "699184fba04b4512"
+      },
+      "id": "699184fba04b4512",
+      "type": "add",
+      "after": "c9aec39f47845748",
+      "date": 1552437896061
+    },
+    {
+      "type": "edit",
+      "id": "699184fba04b4512",
+      "item": {
+        "type": "code",
+        "id": "699184fba04b4512",
+        "text": "node [option=value]\nedge [option=value]"
+      },
+      "date": 1552437931253
+    },
+    {
+      "type": "edit",
+      "id": "c9aec39f47845748",
+      "item": {
+        "type": "paragraph",
+        "id": "c9aec39f47845748",
+        "text": "The Graphviz input language, dot, offers many options for shape, style and color of both nodes and edges. We include these in markup between lines that begin with keywords. Options applying to nodes or edges begin with these words in lowercase.  [https://graphviz.gitlab.io/_pages/doc/info/lang.html language]"
+      },
+      "date": 1552438049953
+    },
+    {
+      "type": "edit",
+      "id": "c9aec39f47845748",
+      "item": {
+        "type": "paragraph",
+        "id": "c9aec39f47845748",
+        "text": "The Graphviz input language, dot, offers many options for shape, style and color of both nodes and edges. We include these in markup between lines that begin with keywords. Options applying to nodes or edges begin with these words in lowercase.  [https://graphviz.gitlab.io/_pages/doc/info/lang.html language] [https://graphviz.gitlab.io/_pages/doc/info/attrs.html options]"
+      },
+      "date": 1552438122036
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "753d46fb1fd7a869"
+      },
+      "id": "753d46fb1fd7a869",
+      "type": "add",
+      "after": "699184fba04b4512",
+      "date": 1552438252559
+    },
+    {
+      "type": "edit",
+      "id": "753d46fb1fd7a869",
+      "item": {
+        "type": "paragraph",
+        "id": "753d46fb1fd7a869",
+        "text": "We often begin by choosing square shapes filled with pastel colors."
+      },
+      "date": 1552438346077
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "f3da7cf83b1eb736"
+      },
+      "id": "f3da7cf83b1eb736",
+      "type": "add",
+      "after": "753d46fb1fd7a869",
+      "date": 1552438351615
+    },
+    {
+      "type": "edit",
+      "id": "f3da7cf83b1eb736",
+      "item": {
+        "type": "code",
+        "id": "f3da7cf83b1eb736",
+        "text": "node [shape=box style=filled fillcolor=pagegreen]"
+      },
+      "date": 1552438390610
+    },
+    {
+      "type": "edit",
+      "id": "f3da7cf83b1eb736",
+      "item": {
+        "type": "code",
+        "id": "f3da7cf83b1eb736",
+        "text": "DOT digraph\n  node [shape=box style=filled fillcolor=pagegreen]"
+      },
+      "date": 1552438430030
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "f5a20daa6badf3ad"
+      },
+      "id": "f5a20daa6badf3ad",
+      "type": "add",
+      "after": "f3da7cf83b1eb736",
+      "date": 1552438446065
+    },
+    {
+      "type": "edit",
+      "id": "f5a20daa6badf3ad",
+      "item": {
+        "type": "paragraph",
+        "id": "f5a20daa6badf3ad",
+        "text": "As we link further into the wiki we may choose another color to emphasize our new kind of pages."
+      },
+      "date": 1552438503993
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "a057ec281c754b8e"
+      },
+      "id": "a057ec281c754b8e",
+      "type": "add",
+      "after": "f5a20daa6badf3ad",
+      "date": 1552438508441
+    },
+    {
+      "type": "edit",
+      "id": "a057ec281c754b8e",
+      "item": {
+        "type": "code",
+        "id": "a057ec281c754b8e",
+        "text": "    HERE\n      node [fillcolor=lightblue]\n      LINKS HERE -> NODE"
+      },
+      "date": 1552438563399
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "7f4ee3805ade1517"
+      },
+      "id": "7f4ee3805ade1517",
+      "type": "add",
+      "after": "a057ec281c754b8e",
+      "date": 1552438577922
+    },
+    {
+      "type": "edit",
+      "id": "7f4ee3805ade1517",
+      "item": {
+        "type": "paragraph",
+        "id": "7f4ee3805ade1517",
+        "text": "Notice that HERE creates a new context and we begin that context with the dot color we choose for new nodes encountered at that level."
+      },
+      "date": 1552438659587
+    },
+    {
+      "type": "edit",
+      "id": "a057ec281c754b8e",
+      "item": {
+        "type": "code",
+        "id": "a057ec281c754b8e",
+        "text": "    HERE NODE\n      node [fillcolor=lightblue]\n      LINKS HERE -> NODE"
+      },
+      "date": 1552438721565
+    },
+    {
+      "type": "add",
+      "id": "53987530646a72a2",
+      "item": {
+        "type": "paragraph",
+        "id": "53987530646a72a2",
+        "text": "Graphviz has its own rules for how options extend over the nodes subsequently created. We accommodate it by running all of the keywords at one indent before entering and processing keywords at deeper contexts."
+      },
+      "after": "7f4ee3805ade1517",
+      "date": 1552438894558
+    },
+    {
+      "type": "add",
+      "id": "764ab9a339cab799",
+      "item": {
+        "type": "paragraph",
+        "id": "764ab9a339cab799",
+        "text": "It can be confusing to get colors to apply correctly. Try adding a distinguishable color at each indent level and then removing those that seem unnecessary."
+      },
+      "after": "53987530646a72a2",
+      "date": 1552438958605
+    },
+    {
+      "type": "edit",
+      "id": "53987530646a72a2",
+      "item": {
+        "type": "paragraph",
+        "id": "53987530646a72a2",
+        "text": "Graphviz has its own rules for how options extend over the nodes subsequently created. We accommodate it by running all of the keywords at one indent before entering and processing keyword contexts at deeper indents."
+      },
+      "date": 1552438993612
+    },
+    {
+      "type": "add",
+      "id": "8242a17bfcde9fce",
+      "item": {
+        "type": "paragraph",
+        "id": "8242a17bfcde9fce",
+        "text": "Our favorite fillcolors are palegreen, lightblue, bisque and gold. If you find a Graphviz diagram you like, double-click to edit and see what shapes and colors it uses."
+      },
+      "after": "7f4ee3805ade1517",
+      "date": 1552439138182
+    },
+    {
+      "type": "add",
+      "id": "3406492c2b56f2ed",
+      "item": {
+        "type": "paragraph",
+        "id": "3406492c2b56f2ed",
+        "text": "# More"
+      },
+      "after": "764ab9a339cab799",
+      "date": 1552439216770
+    },
+    {
+      "type": "edit",
+      "id": "3406492c2b56f2ed",
+      "item": {
+        "type": "markdown",
+        "id": "3406492c2b56f2ed",
+        "text": "# More"
+      },
+      "date": 1552439219762
+    },
+    {
+      "type": "add",
+      "id": "0700513e841da528",
+      "item": {
+        "type": "paragraph",
+        "id": "0700513e841da528",
+        "text": "A more complete list of keywords with more precise definitions can be found in [[Graphviz Markup Semantics]]. Start here first."
+      },
+      "after": "3406492c2b56f2ed",
+      "date": 1552439287484
+    },
+    {
+      "type": "add",
+      "id": "c7d17160645d6157",
+      "item": {
+        "type": "paragraph",
+        "id": "c7d17160645d6157",
+        "text": "You can look through the federation for where Graphviz plugins are used and then try to make sense of the markup that works for them."
+      },
+      "after": "0700513e841da528",
+      "date": 1552439346103
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "b21738a7629139ed"
+      },
+      "id": "b21738a7629139ed",
+      "type": "add",
+      "after": "c7d17160645d6157",
+      "date": 1552439353164
+    },
+    {
+      "type": "edit",
+      "id": "b21738a7629139ed",
+      "item": {
+        "type": "search",
+        "id": "b21738a7629139ed",
+        "text": "SEARCH PLUGINS graphviz"
+      },
+      "date": 1552439390571
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "ce134343126fdbfd"
+      },
+      "id": "ce134343126fdbfd",
+      "type": "add",
+      "after": "b21738a7629139ed",
+      "date": 1552439544743
+    },
+    {
+      "type": "edit",
+      "id": "ce134343126fdbfd",
+      "item": {
+        "type": "paragraph",
+        "id": "ce134343126fdbfd",
+        "text": "Algorithmic markup is improving regularly. Be sure you have a recent release of the plugin."
+      },
+      "date": 1552439615785
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "989898d2fd8ff782"
+      },
+      "id": "989898d2fd8ff782",
+      "type": "add",
+      "after": "ce134343126fdbfd",
+      "date": 1552439620012
+    },
+    {
+      "type": "edit",
+      "id": "989898d2fd8ff782",
+      "item": {
+        "type": "plugmatic",
+        "id": "989898d2fd8ff782",
+        "text": "wiki-plugin-graphviz"
+      },
+      "date": 1552439636408
+    },
+    {
+      "type": "add",
+      "id": "3889ff7153a7b027",
+      "item": {
+        "type": "paragraph",
+        "id": "3889ff7153a7b027",
+        "text": "# Variations"
+      },
+      "after": "2dc882926ab4cab3",
+      "date": 1552440239881
+    },
+    {
+      "type": "add",
+      "id": "196af57f130c5c60",
+      "item": {
+        "type": "paragraph",
+        "id": "196af57f130c5c60",
+        "text": "We can draw undirected graphs where the lines don't have arrowheads."
+      },
+      "after": "3889ff7153a7b027",
+      "date": 1552440282353
+    },
+    {
+      "type": "edit",
+      "id": "3889ff7153a7b027",
+      "item": {
+        "type": "markdown",
+        "id": "3889ff7153a7b027",
+        "text": "# Variations"
+      },
+      "date": 1552440289586
+    },
+    {
+      "type": "edit",
+      "id": "196af57f130c5c60",
+      "item": {
+        "type": "paragraph",
+        "id": "196af57f130c5c60",
+        "text": "We can draw undirected graphs where the edges don't have arrowheads."
+      },
+      "date": 1552440322494
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "3ad12b542fd236fd"
+      },
+      "id": "3ad12b542fd236fd",
+      "type": "add",
+      "after": "989898d2fd8ff782",
+      "date": 1552440334024
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "3ad12b542fd236fd",
+      "date": 1552440343475
+    },
+    {
+      "type": "edit",
+      "id": "3ad12b542fd236fd",
+      "item": {
+        "type": "code",
+        "id": "3ad12b542fd236fd",
+        "text": "DOT graph\n  HERE NODE\n    LINKS HERE -- NODE"
+      },
+      "date": 1552440371127
+    },
+    {
+      "type": "edit",
+      "id": "196af57f130c5c60",
+      "item": {
+        "type": "paragraph",
+        "id": "196af57f130c5c60",
+        "text": "We can draw undirected graphs where the edges don't have arrowheads. Notice two changes."
+      },
+      "date": 1552440405173
+    },
+    {
+      "type": "add",
+      "id": "11a97385f675b2f7",
+      "item": {
+        "type": "paragraph",
+        "id": "11a97385f675b2f7",
+        "text": "We can ask that identical edges not be duplicated in the diagram even if we add them multiple times."
+      },
+      "after": "196af57f130c5c60",
+      "date": 1552440465857
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "11a97385f675b2f7",
+      "date": 1552440471049
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "fd62caace4902dd1"
+      },
+      "id": "fd62caace4902dd1",
+      "type": "add",
+      "after": "989898d2fd8ff782",
+      "date": 1552440479385
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "fd62caace4902dd1",
+      "date": 1552440490130
+    },
+    {
+      "type": "edit",
+      "id": "fd62caace4902dd1",
+      "item": {
+        "type": "code",
+        "id": "fd62caace4902dd1",
+        "text": "DOT strict digraph"
+      },
+      "date": 1552440504691
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "98b51a02966dacf0"
+      },
+      "id": "98b51a02966dacf0",
+      "type": "add",
+      "after": "989898d2fd8ff782",
+      "date": 1552440510373
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "98b51a02966dacf0",
+      "date": 1552440528804
+    },
+    {
+      "type": "edit",
+      "id": "98b51a02966dacf0",
+      "item": {
+        "type": "code",
+        "id": "98b51a02966dacf0",
+        "text": "DOT strict graph"
+      },
+      "date": 1552440541346
+    },
+    {
+      "type": "edit",
+      "id": "6f02c017b4a0f5e4",
+      "item": {
+        "type": "markdown",
+        "id": "6f02c017b4a0f5e4",
+        "text": "# Selectivity"
+      },
+      "date": 1552440760017
+    },
+    {
+      "type": "edit",
+      "id": "764ab9a339cab799",
+      "item": {
+        "type": "paragraph",
+        "id": "764ab9a339cab799",
+        "text": "It can be confusing to get colors to apply correctly. Try adding a distinguishable shape or color at each indent level and then removing those that seem unnecessary."
+      },
+      "date": 1552440901144
+    },
+    {
+      "type": "add",
+      "id": "059ae274375b65c4",
+      "item": {
+        "type": "paragraph",
+        "id": "059ae274375b65c4",
+        "text": "# Method"
+      },
+      "after": "764ab9a339cab799",
+      "date": 1552440970722
+    },
+    {
+      "type": "edit",
+      "id": "059ae274375b65c4",
+      "item": {
+        "type": "markdown",
+        "id": "059ae274375b65c4",
+        "text": "# Method"
+      },
+      "date": 1552441124399
+    },
+    {
+      "type": "add",
+      "id": "638de09f89ab38dc",
+      "item": {
+        "type": "paragraph",
+        "id": "638de09f89ab38dc",
+        "text": "Start every new diagram with just a few lines of markup just as we have here. Test this in place with pages and links you understand. Avoid pages with too many links or add WHERE keywords to select only the important ones."
+      },
+      "after": "059ae274375b65c4",
+      "date": 1552441127188
+    },
+    {
+      "type": "add",
+      "id": "452f0eba971bd7ff",
+      "item": {
+        "type": "paragraph",
+        "id": "452f0eba971bd7ff",
+        "text": "Add new keywords in the context of ones you already understand. If new keywords don't work at first try simpler ones just to get something to draw. If things get really messed up, fork an earlier working version from Journal history."
+      },
+      "after": "638de09f89ab38dc",
+      "date": 1552441299401
+    },
+    {
+      "type": "add",
+      "id": "c48a929a8794d42a",
+      "item": {
+        "type": "paragraph",
+        "id": "c48a929a8794d42a",
+        "text": "If you think you have a diagram working, try dragging it into new locations in the federation and see how it works there. If a drawing fails completely look for console.log messages in the browser's debugger."
+      },
+      "after": "452f0eba971bd7ff",
+      "date": 1552441510685
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "059ae274375b65c4",
+        "638de09f89ab38dc",
+        "452f0eba971bd7ff",
+        "c48a929a8794d42a",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "764ab9a339cab799",
+      "date": 1552441516216
+    },
+    {
+      "type": "add",
+      "id": "28479e60403ce727",
+      "item": {
+        "type": "paragraph",
+        "id": "28479e60403ce727",
+        "text": "Graphviz orders nodes into ranks top to bottom based on the edges that connect them. Change this global option to have it draw left to right. This works better for diagrams that are wider than they are tall."
+      },
+      "after": "11a97385f675b2f7",
+      "date": 1552442058276
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "28479e60403ce727",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "059ae274375b65c4",
+        "638de09f89ab38dc",
+        "452f0eba971bd7ff",
+        "c48a929a8794d42a",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "28479e60403ce727",
+      "date": 1552442063897
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "382ea81b8740b496"
+      },
+      "id": "382ea81b8740b496",
+      "type": "add",
+      "after": "989898d2fd8ff782",
+      "date": 1552442072618
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "28479e60403ce727",
+        "382ea81b8740b496",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "059ae274375b65c4",
+        "638de09f89ab38dc",
+        "452f0eba971bd7ff",
+        "c48a929a8794d42a",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "382ea81b8740b496",
+      "date": 1552442235202
+    },
+    {
+      "type": "edit",
+      "id": "382ea81b8740b496",
+      "item": {
+        "type": "factory",
+        "id": "382ea81b8740b496",
+        "text": "rankdir"
+      },
+      "date": 1552442274921
+    },
+    {
+      "type": "edit",
+      "id": "382ea81b8740b496",
+      "item": {
+        "type": "code",
+        "id": "382ea81b8740b496",
+        "text": "  rankdir=LR"
+      },
+      "date": 1552442291803
+    },
+    {
+      "type": "edit",
+      "id": "382ea81b8740b496",
+      "item": {
+        "type": "code",
+        "id": "382ea81b8740b496",
+        "text": "rankdir=LR"
+      },
+      "date": 1552442324119
+    },
+    {
+      "type": "add",
+      "id": "a04bcbf9318e2f8d",
+      "item": {
+        "type": "paragraph",
+        "id": "a04bcbf9318e2f8d",
+        "text": "Graphviz has other layout algorithms that may be useful in special cases. If a diagram has no important top or bottom a mass and tension style layout may work better."
+      },
+      "after": "28479e60403ce727",
+      "date": 1552442456644
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "28479e60403ce727",
+        "382ea81b8740b496",
+        "a04bcbf9318e2f8d",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "059ae274375b65c4",
+        "638de09f89ab38dc",
+        "452f0eba971bd7ff",
+        "c48a929a8794d42a",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "a04bcbf9318e2f8d",
+      "date": 1552442466354
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "28a4537d6acb8bf9"
+      },
+      "id": "28a4537d6acb8bf9",
+      "type": "add",
+      "after": "989898d2fd8ff782",
+      "date": 1552442477374
+    },
+    {
+      "type": "move",
+      "order": [
+        "09c8b5dd79bcb1fc",
+        "314af817b9207cfd",
+        "9ac4d4d95d89f17f",
+        "1da0d77ce31d39e5",
+        "b3701802bcca51f0",
+        "0dc972061547c73c",
+        "2f6d2789e0d648a1",
+        "23bbbbea40f60224",
+        "8035541b1316a395",
+        "32b80b30893ededa",
+        "73ff5445a9852031",
+        "73ddf1bb8b33d27d",
+        "d48bd4a04e5b4fb5",
+        "2dc882926ab4cab3",
+        "3889ff7153a7b027",
+        "196af57f130c5c60",
+        "3ad12b542fd236fd",
+        "11a97385f675b2f7",
+        "fd62caace4902dd1",
+        "98b51a02966dacf0",
+        "28479e60403ce727",
+        "382ea81b8740b496",
+        "a04bcbf9318e2f8d",
+        "28a4537d6acb8bf9",
+        "f314c17ba8ff4ca9",
+        "ec89deb967dffee7",
+        "6488bcaaad82f0df",
+        "05fc6440b6d12721",
+        "417600ef5167a73d",
+        "c909efeee8c075d1",
+        "69eab0b5b0998a31",
+        "b9ce862c53001200",
+        "98aabf64ce998167",
+        "44899e45ba237ce6",
+        "6f02c017b4a0f5e4",
+        "b4fa7ff9a52f5d10",
+        "d29f7ee447a35140",
+        "cba3a6556d3e1ee3",
+        "febc163adc88c8ed",
+        "cb6d9d6081de0f78",
+        "c9aec39f47845748",
+        "699184fba04b4512",
+        "753d46fb1fd7a869",
+        "f3da7cf83b1eb736",
+        "f5a20daa6badf3ad",
+        "a057ec281c754b8e",
+        "7f4ee3805ade1517",
+        "8242a17bfcde9fce",
+        "53987530646a72a2",
+        "059ae274375b65c4",
+        "638de09f89ab38dc",
+        "452f0eba971bd7ff",
+        "c48a929a8794d42a",
+        "764ab9a339cab799",
+        "3406492c2b56f2ed",
+        "0700513e841da528",
+        "c7d17160645d6157",
+        "b21738a7629139ed",
+        "ce134343126fdbfd",
+        "989898d2fd8ff782"
+      ],
+      "id": "28a4537d6acb8bf9",
+      "date": 1552442487378
+    },
+    {
+      "type": "edit",
+      "id": "28a4537d6acb8bf9",
+      "item": {
+        "type": "code",
+        "id": "28a4537d6acb8bf9",
+        "text": "layout=neato"
+      },
+      "date": 1552442497394
+    },
+    {
+      "type": "edit",
+      "id": "a04bcbf9318e2f8d",
+      "item": {
+        "type": "paragraph",
+        "id": "a04bcbf9318e2f8d",
+        "text": "Graphviz has other layout algorithms that may be useful in special cases. If a diagram has no important top or bottom a mass and tension style layout may work better. [https://graphviz.gitlab.io/_pages/pdf/neatoguide.pdf pdf]"
+      },
+      "date": 1552442590145
+    },
+    {
+      "type": "edit",
+      "id": "28479e60403ce727",
+      "item": {
+        "type": "paragraph",
+        "id": "28479e60403ce727",
+        "text": "Graphviz orders nodes into ranks top to bottom based on the edges that connect them. Change this option first thing to have it draw left to right. This works better for diagrams that are wider than they are tall."
+      },
+      "date": 1552509854364
+    }
+  ]
+}

@@ -15,11 +15,28 @@
   async function makedot($item, item) {
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
-    let text = item.text
-    if (text.match(/^DOT MEHAFFY$/)) {
-      return diagram ($item, item)
-    } else if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
+    var text = item.text
+    if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
+      let site = $item.parents('.page').data('site')||location.host
+      let slug = m[1]
+      var page = null
+      try {
+        page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
+      } catch (err) {console.error('failed redirect', site, slug, err)}
+      if (page) {
+        redirect = page.story.find(each => each.type == 'graphviz')
+        if (redirect) {
+          console.log('redirect',site, slug, redirect)
+          text = redirect.text
+        }
+      }
+      if (text == item.text) {
+        return trouble("can't do", item.text)
+      }
+    }
+    if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
+      console.log('root',root)
       root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
@@ -71,8 +88,11 @@
         return context.page
       } else {
         let slug = asSlug(context.name)
-        const res = await fetch(`//${context.site}/${slug}.json`)
-        return res.ok ? res.json() : null
+        try {
+          return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
+        } catch (err) {
+          return null
+        }
       }
     }
 
@@ -110,7 +130,10 @@
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
-            let page = await get(context)
+            var page = null
+            try {
+              page = await get(context)
+            } catch (err) {}
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
@@ -180,54 +203,6 @@
     }
   }
 
-  async function diagram ($item, item) {
-    let $page = $item.parents('.page')
-    let site = $page.data('site')||location.host
-    let slug = $page.attr('id')
-
-    const get = (url) => fetch(url).then(res => res.json())
-    const quote = (string) => `"${string.replace(/ +/g,'\n')}"`
-    const node = (title,color) => `${quote(title)} [fillcolor=${sites[asSlug(title)]?color:'lightgray'}]`
-    var sites = {}, sitemap = await get(`http://${site}/system/sitemap.json`)
-    sitemap.map (each => sites[each.slug] = each)
-
-    var dot = ['node [shape=box style=filled fillcolor=lightgray]','rankdir=LR']
-    var page = await get(`http://${site}/${slug}.json`)
-    const links = /\[\[(.+?)\]\]/g
-    while(more = links.exec(page.story[1].text)) {
-      let title = more[1]
-      console.log('title',title)
-      dot.push(node(title,'bisque'))
-      if(sites[asSlug(title)]) {
-        let page2 = await get(`http://growing.bay.wiki.org/${asSlug(title)}.json`)
-        for (var i = 0; i<page2.story.length; i++) {
-          let text2 = page2.story[i].text
-          const links2 = /\[\[(.+?)\]\]/g
-          if (text2.match(/^When /)) {
-            while(more2 = links2.exec(text2)) {
-              console.log('when',more2[1])
-              dot.push(node(more2[1],'lightblue'))
-              dot.push(`${quote(more2[1])} -> ${quote(title)}`)
-            }
-          }
-          if (text2.match(/^Then /)) {
-            while(more2 = links2.exec(text2)) {
-              console.log('then',more2[1])
-              dot.push(node(more2[1],'lightblue'))
-              dot.push(`${quote(title)} -> ${quote(more2[1])}`)
-            }
-          }
-        }
-      } else {
-        dot.push(`${quote('pre-'+title+'-one')} -> ${quote(title)}`)
-        dot.push(`${quote(title)} -> ${quote('post-'+title+'-one')}`)
-        dot.push(`${quote('pre-'+title+'-two')} -> ${quote(title)}`)
-        dot.push(`${quote(title)} -> ${quote('post-'+title+'-two')}`)
-      }
-    }
-    return `strict digraph {\n${dot.join("\n")}\n}`
-  }
-
   function message (text) {
     return `
     <div class="viewer" data-item="viewer" style="width:98%">
@@ -270,6 +245,7 @@
         })
       })
     } catch (err) {
+      console.log('makedot',err)
       $item.html(message(err.message))
     }
   };
