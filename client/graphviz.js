@@ -22,7 +22,7 @@
       var page = null
       try {
         page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
-      } catch (err) {}
+      } catch (err) {console.error('failed redirect', site, slug, err)}
       if (page) {
         redirect = page.story.find(each => each.type == 'graphviz')
         if (redirect) {
