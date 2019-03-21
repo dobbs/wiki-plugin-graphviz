@@ -1,9 +1,6 @@
 {
   "name": "wiki-plugin-graphviz",
   "version": "0.3.0",
-  "publishConfig": {
-    "tag": "next"
-  },
   "description": "Federated Wiki - Graphviz Plugin",
   "keywords": [
     "graphviz",
