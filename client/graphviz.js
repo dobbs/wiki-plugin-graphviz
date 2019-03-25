@@ -179,13 +179,17 @@
 
           if (ir.match(/^LINEUP$/)) {
             let tree = nest()
-            let $page = $item.parents('.page')
-            let $lineup = $(`.page:lt(${$('.page').index($page)})`)
-            $lineup.each((i,p) => {
-              let site = $(p).data('site')||location.host
-              let name = $(p).data('data').title
-              deeper.push({tree, context:Object.assign({},context,{site, name})})
-            })
+            try {
+              let $page = $item.parents('.page')
+              let $lineup = $(`.page:lt(${$('.page').index($page)})`)
+              $lineup.each((i,p) => {
+                let site = $(p).data('site')||location.host
+                let name = $(p).data('data').title
+                deeper.push({tree, context:Object.assign({},context,{site, name})})
+              })
+            } catch {
+              throw new Error("can't do LINEUP yet")
+            }
           } else trouble("can't do", ir)
 
         } else {
