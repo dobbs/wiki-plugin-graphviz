@@ -124,7 +124,11 @@
               if (!ir.match(/^LINKS$/)) {
                 trouble("can't do link", ir)
               }
-              deeper.push({tree, context:Object.assign({},context,{name:link})})
+              if (tree.length) {
+                let new_context = Object.assign({},context,{name:link})
+                new_context.promise = get(new_context)
+                deeper.push({tree, context:new_context})
+            }
             })
           } else
 
@@ -132,7 +136,12 @@
             let tree = nest()
             var page = null
             try {
-              page = await get(context)
+              if(context.promise) {
+                page = await context.promise
+                delete context.promise
+              } else {
+                page = await get(context)
+              }
             } catch (err) {}
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
