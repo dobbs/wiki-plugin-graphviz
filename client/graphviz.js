@@ -243,6 +243,25 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
+
+    function download(filename, text) {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+
+    $item.click((e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      let slug = $item.parents('.page').attr('id')
+      let svg = $item.find('graphviz-viewer').get(0).shadowRoot.querySelector('svg').outerHTML
+      download(`${slug}.svg`, svg)
+    })
+
     try {
       let dot = await makedot($item, item)
       $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
