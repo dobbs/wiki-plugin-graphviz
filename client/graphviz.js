@@ -170,6 +170,14 @@
             if (m = ir.match(/\/.*?\//)) {
               let regex = new RegExp(m[0].slice(1,-1))
               want = want.filter(item => (item.text||'').match(regex))
+            } else if (m = ir.match(/ FOLD ([a-z_-]+)/)) {
+              var within = false
+              want = want.filter((item) => {
+                if (item.type == 'pagefold') {
+                  within = item.text == m[1]
+                }
+                return within
+              })
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
               want = want.filter(item => item[attr])
