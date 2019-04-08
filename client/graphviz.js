@@ -14,7 +14,6 @@
 
   async function makedot($item, item) {
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
-
     var text = item.text
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
@@ -83,16 +82,31 @@
       throw new Error(text + "\n" + detail)
     }
 
+    async function probe (site,slug) {
+      try {
+        return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
+      } catch (err) {
+        return null
+      }
+    }
+
     async function get (context) {
       if (context.name == context.page.title) {
         return context.page
       } else {
         let slug = asSlug(context.name)
-        try {
-          return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
-        } catch (err) {
-          return null
+        var sites = context.page.journal.filter(action=>action.site).map(action=>action.site)
+        sites.reverse()
+        sites.unshift(context.site)
+        sites.unshift(location.host)
+        sites = sites.filter((site,pos)=>sites.indexOf(site)==pos)
+        console.log('get', slug, sites)
+        for (let site of sites) {
+          let page = await probe(site,slug)
+          console.log('probe',site,slug,page)
+          if (page) return page
         }
+        return null
       }
     }
 
@@ -255,6 +269,7 @@
     }
 
     $item.click((e) => {
+      if(!e.shiftKey) return
       e.stopPropagation()
       e.preventDefault()
       let slug = $item.parents('.page').attr('id')
