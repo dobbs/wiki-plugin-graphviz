@@ -82,6 +82,17 @@
       throw new Error(text + "\n" + detail)
     }
 
+    function collaborators (journal, implicit) {
+      // usage: collaborators(page.journal, [site, item.site, location.host])
+      let sites = journal
+        .filter(action=>action.site)
+        .map(action=>action.site)
+      sites.push(...implicit)
+      sites.reverse()
+      return sites
+        .filter((site,pos)=>sites.indexOf(site)==pos)
+    }
+
     async function probe (site, slug) {
       try {
         return wiki.site(site).get(`${slug}.json`, (err, page) => page)
@@ -95,12 +106,9 @@
         return context.page
       } else {
         let slug = asSlug(context.name)
-        let forks = context.page.journal.filter(action=>action.site).map(action=>action.site)
-        forks.reverse()
-        forks.unshift(location.host, context.site)
-        let twins = forks.filter((sitey,pos)=>forks.indexOf(sitey)==pos)
-        console.log('twins', context.site, slug, twins)
-        for (let site of twins) {
+        let sites = collaborators(context.page.journal, [context.site, location.host])
+        console.log('resolution', slug, sites)
+        for (let site of sites) {
           try {
             return await probe(site,slug)
           } catch (err) {
