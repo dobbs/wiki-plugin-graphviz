@@ -82,9 +82,9 @@
       throw new Error(text + "\n" + detail)
     }
 
-    async function probe (site,slug) {
+    async function probe (site, slug) {
       try {
-        return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
+        return wiki.site(site).get(`${slug}.json`, (err, page) => page)
       } catch (err) {
         return null
       }
@@ -95,16 +95,17 @@
         return context.page
       } else {
         let slug = asSlug(context.name)
-        var sites = context.page.journal.filter(action=>action.site).map(action=>action.site)
-        sites.reverse()
-        sites.unshift(context.site)
-        sites.unshift(location.host)
-        sites = sites.filter((site,pos)=>sites.indexOf(site)==pos)
-        console.log('get', slug, sites)
-        for (let site of sites) {
-          let page = await probe(site,slug)
-          console.log('probe',site,slug,page)
-          if (page) return page
+        let forks = context.page.journal.filter(action=>action.site).map(action=>action.site)
+        forks.reverse()
+        forks.unshift(location.host, context.site)
+        let twins = forks.filter((sitey,pos)=>forks.indexOf(sitey)==pos)
+        console.log('twins', context.site, slug, twins)
+        for (let site of twins) {
+          try {
+            return await probe(site,slug)
+          } catch (err) {
+            // 404
+          }
         }
         return null
       }
@@ -158,6 +159,7 @@
               }
             } catch (err) {}
             if (page) {
+              context.page = page
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
               } else
