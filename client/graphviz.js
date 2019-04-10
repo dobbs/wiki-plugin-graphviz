@@ -101,16 +101,16 @@
       }
     }
 
-    async function get (context) {
+    async function polyget (context) {
       if (context.name == context.page.title) {
-        return context.page
+        return {site: context.site, page: context.page}
       } else {
         let slug = asSlug(context.name)
         let sites = collaborators(context.page.journal, [context.site, location.host])
         console.log('resolution', slug, sites)
         for (let site of sites) {
           try {
-            return await probe(site,slug)
+            return {site, page: await probe(site,slug)}
           } catch (err) {
             // 404
           }
@@ -149,7 +149,7 @@
               }
               if (tree.length) {
                 let new_context = Object.assign({},context,{name:link})
-                new_context.promise = get(new_context)
+                new_context.promise = polyget(new_context)
                 deeper.push({tree, context:new_context})
             }
             })
@@ -157,17 +157,21 @@
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
-            var page = null
+            let page = null
+            let site = ''
             try {
               if(context.promise) {
-                page = await context.promise
+                let poly = await context.promise
+                site = poly.site
+                page = poly.page
                 delete context.promise
               } else {
-                page = await get(context)
+                let poly = await polyget(context)
+                site = poly.site
+                page = poly.page
               }
             } catch (err) {}
             if (page) {
-              context.page = page
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
               } else
@@ -178,7 +182,7 @@
               if (!ir.match(/^HERE$/)) {
                 trouble("can't do here", ir)
               }
-              deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
+              deeper.push({tree, context:Object.assign({},context,{site, page, want:page.story})})
             }
             if (peek('ELSE')) {
               let tree = nest()
