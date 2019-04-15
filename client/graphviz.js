@@ -202,10 +202,11 @@
             for (let item of context.want) {
               if (item.type == 'graph') {
                 let graph = graphData(context.name, item.text)
+                let kind = context.graph.match(/digraph/) ? '->' : '--'
                 for (let here in graph) {
                   dot.push(`${quote(here)}`)
                   for (let there of graph[here]) {
-                    dot.push(`${quote(here)} -> ${quote(there)}`)
+                    dot.push(`${quote(here)} ${kind} ${quote(there)}`)
                   }
                 }
               }
