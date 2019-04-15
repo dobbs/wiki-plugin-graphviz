@@ -119,6 +119,49 @@
       }
     }
 
+    function graphData(here, text) {
+      // from https://github.com/WardCunningham/wiki-plugin-graph/blob/fb7346083870722a7fbec6a8dc1903eb93ff322c/client/graph.coffee#L10-L31
+      var graph, left, line, merge, op, right, token, tokens, _i, _j, _len, _len1, _ref;
+      merge = function(arcs, right) {
+        if (arcs.indexOf(right) === -1) {
+          return arcs.push(right);
+        }
+      };
+      graph = {};
+      left = op = right = null;
+      _ref = text.split(/\n/);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        line = _ref[_i];
+        tokens = line.trim().split(/\s*(-->|<--|<->)\s*/);
+        for (_j = 0, _len1 = tokens.length; _j < _len1; _j++) {
+          token = tokens[_j];
+          if (token === '') {
+          } else if (token === '-->' || token === '<--' || token === '<->') {
+            op = token;
+          } else {
+            right = token === 'HERE' ? here : token;
+            graph[right] || (graph[right] = []);
+            if ((left != null) && (op != null) && (right != null)) {
+              switch (op) {
+                case '-->':
+                  merge(graph[left], right);
+                  break;
+                case '<--':
+                  merge(graph[right], left);
+                  break;
+                case '<->':
+                  merge(graph[left], right);
+                  merge(graph[right], left);
+              }
+            }
+            left = right;
+            op = right = null;
+          }
+        }
+      }
+      return graph;
+    }
+
     async function eval(tree, context, dot) {
       let deeper = []
       var pc = 0
@@ -153,6 +196,20 @@
                 deeper.push({tree, context:new_context})
             }
             })
+          } else
+
+          if (ir.match(/^GRAPH$/)) {
+            for (let item of context.want) {
+              if (item.type == 'graph') {
+                let graph = graphData(context.name, item.text)
+                for (let here in graph) {
+                  dot.push(`${quote(here)}`)
+                  for (let there of graph[here]) {
+                    dot.push(`${quote(here)} -> ${quote(there)}`)
+                  }
+                }
+              }
+            }
           } else
 
           if (ir.match(/^HERE/)) {
