@@ -94,10 +94,15 @@
     }
 
     async function probe (site, slug) {
-      try {
-        return wiki.site(site).get(`${slug}.json`, (err, page) => page)
-      } catch (err) {
-        return null
+      if (site === 'local') {
+        const localPage = localStorage.getItem(slug)
+        if (!localPage) {
+          throw new Error('404 not found')
+        }
+        return JSON.parse(localPage)
+      } else {
+        // get returns a promise from $.ajax for relevant site adapters
+        return wiki.site(site).get(`${slug}.json`, () => null)
       }
     }
 
@@ -106,13 +111,13 @@
         return {site: context.site, page: context.page}
       } else {
         let slug = asSlug(context.name)
-        let sites = collaborators(context.page.journal, [context.site, location.host])
+        let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
         console.log('resolution', slug, sites)
         for (let site of sites) {
           try {
             return {site, page: await probe(site,slug)}
           } catch (err) {
-            // 404
+            // 404 not found errors expected
           }
         }
         return null
