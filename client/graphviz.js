@@ -14,19 +14,15 @@
 
   async function makedot($item, item) {
     const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
-
     var text = item.text
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
-      var page = null
-      try {
-        page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
-      } catch (err) {console.error('failed redirect', site, slug, err)}
-      if (page) {
-        redirect = page.story.find(each => each.type == 'graphviz')
+      let page = $item.parents('.page').data('data')
+      let poly = await polyget({name: slug, site, page})
+      if (page = poly.page) {
+        let redirect = page.story.find(each => each.type == 'graphviz')
         if (redirect) {
-          console.log('redirect',site, slug, redirect)
           text = redirect.text
         }
       }
@@ -83,17 +79,89 @@
       throw new Error(text + "\n" + detail)
     }
 
-    async function get (context) {
+    function collaborators (journal, implicit) {
+      // usage: collaborators(page.journal, [site, item.site, location.host])
+      let sites = journal
+        .filter(action=>action.site)
+        .map(action=>action.site)
+      sites.push(...implicit)
+      sites.reverse()
+      return sites
+        .filter((site,pos)=>sites.indexOf(site)==pos)
+    }
+
+    async function probe (site, slug) {
+      if (site === 'local') {
+        const localPage = localStorage.getItem(slug)
+        if (!localPage) {
+          throw new Error('404 not found')
+        }
+        return JSON.parse(localPage)
+      } else {
+        // get returns a promise from $.ajax for relevant site adapters
+        return wiki.site(site).get(`${slug}.json`, () => null)
+      }
+    }
+
+    async function polyget (context) {
       if (context.name == context.page.title) {
-        return context.page
+        return {site: context.site, page: context.page}
       } else {
         let slug = asSlug(context.name)
-        try {
-          return wiki.site(context.site).get(`${slug}.json`, (err, page) => page)
-        } catch (err) {
-          return null
+        let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
+        console.log('resolution', slug, sites)
+        for (let site of sites) {
+          try {
+            return {site, page: await probe(site,slug)}
+          } catch (err) {
+            // 404 not found errors expected
+          }
+        }
+        return null
+      }
+    }
+
+    function graphData(here, text) {
+      // from https://github.com/WardCunningham/wiki-plugin-graph/blob/fb7346083870722a7fbec6a8dc1903eb93ff322c/client/graph.coffee#L10-L31
+      var graph, left, line, merge, op, right, token, tokens, _i, _j, _len, _len1, _ref;
+      merge = function(arcs, right) {
+        if (arcs.indexOf(right) === -1) {
+          return arcs.push(right);
+        }
+      };
+      graph = {};
+      left = op = right = null;
+      _ref = text.split(/\n/);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        line = _ref[_i];
+        tokens = line.trim().split(/\s*(-->|<--|<->)\s*/);
+        for (_j = 0, _len1 = tokens.length; _j < _len1; _j++) {
+          token = tokens[_j];
+          if (token === '') {
+          } else if (token === '-->' || token === '<--' || token === '<->') {
+            op = token;
+          } else {
+            right = token === 'HERE' ? here : token;
+            graph[right] || (graph[right] = []);
+            if ((left != null) && (op != null) && (right != null)) {
+              switch (op) {
+                case '-->':
+                  merge(graph[left], right);
+                  break;
+                case '<--':
+                  merge(graph[right], left);
+                  break;
+                case '<->':
+                  merge(graph[left], right);
+                  merge(graph[right], left);
+              }
+            }
+            left = right;
+            op = right = null;
+          }
         }
       }
+      return graph;
     }
 
     async function eval(tree, context, dot) {
@@ -124,15 +192,44 @@
               if (!ir.match(/^LINKS$/)) {
                 trouble("can't do link", ir)
               }
-              deeper.push({tree, context:Object.assign({},context,{name:link})})
+              if (tree.length) {
+                let new_context = Object.assign({},context,{name:link})
+                new_context.promise = polyget(new_context)
+                deeper.push({tree, context:new_context})
+            }
             })
+          } else
+
+          if (ir.match(/^GRAPH$/)) {
+            for (let item of context.want) {
+              if (item.type == 'graph') {
+                let graph = graphData(context.name, item.text)
+                let kind = context.graph.match(/digraph/) ? '->' : '--'
+                for (let here in graph) {
+                  dot.push(`${quote(here)}`)
+                  for (let there of graph[here]) {
+                    dot.push(`${quote(here)} ${kind} ${quote(there)}`)
+                  }
+                }
+              }
+            }
           } else
 
           if (ir.match(/^HERE/)) {
             let tree = nest()
-            var page = null
+            let page = null
+            let site = ''
             try {
-              page = await get(context)
+              if(context.promise) {
+                let poly = await context.promise
+                site = poly.site
+                page = poly.page
+                delete context.promise
+              } else {
+                let poly = await polyget(context)
+                site = poly.site
+                page = poly.page
+              }
             } catch (err) {}
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
@@ -145,7 +242,7 @@
               if (!ir.match(/^HERE$/)) {
                 trouble("can't do here", ir)
               }
-              deeper.push({tree, context:Object.assign({},context,{page, want:page.story})})
+              deeper.push({tree, context:Object.assign({},context,{site, page, want:page.story})})
             }
             if (peek('ELSE')) {
               let tree = nest()
@@ -161,6 +258,14 @@
             if (m = ir.match(/\/.*?\//)) {
               let regex = new RegExp(m[0].slice(1,-1))
               want = want.filter(item => (item.text||'').match(regex))
+            } else if (m = ir.match(/ FOLD ([a-z_-]+)/)) {
+              var within = false
+              want = want.filter((item) => {
+                if (item.type == 'pagefold') {
+                  within = item.text == m[1]
+                }
+                return within
+              })
             } else if (m = ir.match(/[a-z_]+/)) {
               let attr = m[0]
               want = want.filter(item => item[attr])
@@ -179,13 +284,17 @@
 
           if (ir.match(/^LINEUP$/)) {
             let tree = nest()
-            let $page = $item.parents('.page')
-            let $lineup = $(`.page:lt(${$('.page').index($page)})`)
-            $lineup.each((i,p) => {
-              let site = $(p).data('site')||location.host
-              let name = $(p).data('data').title
-              deeper.push({tree, context:Object.assign({},context,{site, name})})
-            })
+            try {
+              let $page = $item.parents('.page')
+              let $lineup = $(`.page:lt(${$('.page').index($page)})`)
+              $lineup.each((i,p) => {
+                let site = $(p).data('site')||location.host
+                let name = $(p).data('data').title
+                deeper.push({tree, context:Object.assign({},context,{site, name})})
+              })
+            } catch {
+              throw new Error("can't do LINEUP yet")
+            }
           } else trouble("can't do", ir)
 
         } else {
@@ -222,6 +331,26 @@
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
     });
+
+    function download(filename, text) {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+
+    $item.click((e) => {
+      if(!e.shiftKey) return
+      e.stopPropagation()
+      e.preventDefault()
+      let slug = $item.parents('.page').attr('id')
+      let svg = $item.find('graphviz-viewer').get(0).shadowRoot.querySelector('svg').outerHTML
+      download(`${slug}.svg`, svg)
+    })
+
     try {
       let dot = await makedot($item, item)
       $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
