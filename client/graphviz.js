@@ -18,14 +18,11 @@
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
-      var page = null
-      try {
-        page = await wiki.site(site).get(`${slug}.json`, (err, page) => page)
-      } catch (err) {console.error('failed redirect', site, slug, err)}
-      if (page) {
-        redirect = page.story.find(each => each.type == 'graphviz')
+      let page = $item.parents('.page').data('data')
+      let poly = await polyget({name: slug, site, page})
+      if (page = poly.page) {
+        let redirect = page.story.find(each => each.type == 'graphviz')
         if (redirect) {
-          console.log('redirect',site, slug, redirect)
           text = redirect.text
         }
       }
