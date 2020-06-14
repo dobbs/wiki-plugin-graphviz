@@ -15,20 +15,20 @@
   },
   "contributors": [
     "Eric Dobbs <eric@dobbse.net>",
-    "Ward Cunningham <ward@c2.com>"
+    "Ward Cunningham <ward@c2.com>",
+    "Paul Rodwell <paul.rodwell@btinternet.com>",
+    "Nick Niemeir <nick.niemeir@gmail.com>"
   ],
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "authors": "grunt update-authors"
   },
   "devDependencies": {
     "@hpcc-js/wasm": "^0.3.14",
     "expect.js": "^0.3.1",
-    "grunt": "^1.0.4",
-    "grunt-contrib-coffee": "^2.0.0",
-    "grunt-contrib-watch": "^1.0.0",
+    "grunt": "^1.1.0",
     "grunt-git-authors": "^3.2.0",
-    "grunt-mocha-test": "^0.13.2",
-    "mocha": "^5.2.0"
+    "mocha": "^8.0.1"
   },
   "license": "MIT",
   "repository": {
