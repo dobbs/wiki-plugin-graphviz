@@ -1,6 +1,8 @@
 "use strict"
 
-import Viz from './viz.js/viz.es.js'
+import {graphviz} from './wasm/index.es6.js';
+
+const wasmFolder = "/plugins/graphviz/wasm"
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -18,29 +20,39 @@ class GraphvizViewer extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({mode: 'open'})
-    this.shadowRoot.appendChild(message('drawing diagram'))
-    this.workerURL = new URL('./viz.js/full.render.js', import.meta.url)
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.message('drawing diagram');
+  }
+
+  message(text) {
+    this.shadowRoot.querySelector('#message').innerHTML = text;
   }
 
   render() {
     const self = this
     if (!this.alreadyRendered) {
       this.alreadyRendered = new Promise((resolve, reject) => {
-        self.viz = new Viz({ workerURL: self.workerURL })
-        return self.viz.renderSVGElement(self.decodedHTML())
-          .then(svg => {
-            svg.setAttribute('style', 'width: 100%; height: auto;')
-            self._replaceShadowRoot(svg)
-            return svg
-          })
-          .then(resolve)
-          .catch(err => {console.log('render',err); self._replaceShadowRoot(message(err.message))})
+        const dot = self.decodedHTML()
+        graphviz.layout(dot, "svg", "dot", {
+          wasmFolder: wasmFolder
+        })
+        .then(svgString => {
+          const parser = new DOMParser()
+          const svg = parser.parseFromString(svgString, 'image/svg+xml').documentElement
+          svg.setAttribute('style', 'width: 100%; height: auto;')
+          //self._clearShadowRoot()
+          //self.shadowRoot.innerHTML = svg
+          self._replaceShadowRoot(svg)
+          return svg
+        })
+        .then(resolve)
+        .catch(err => {console.log('render',err); self._replaceShadowRoot(message(err.message))})
       })
     }
     return this.alreadyRendered
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     const self = this
     if (super.connectedCallback)
       super.connectedCallback()
