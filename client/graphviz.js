@@ -13,7 +13,7 @@
   };
 
   async function makedot($item, item) {
-    const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
+    const {asSlug} = wiki
     var text = item.text
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
