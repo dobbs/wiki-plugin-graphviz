@@ -4,7 +4,7 @@
     {
       "type": "paragraph",
       "id": "eedd14de0c0f8279",
-      "text": "This plugin renders Graphviz 'dot' markup client-side using the viz.js implementation. [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
+      "text": "This plugin renders Graphviz 'dot' markup client-side using the graphvizlib.wasm implementation from HPCC Systems. [https://github.com/hpcc-systems/hpcc-js-wasm source] [https://graphviz.gitlab.io/documentation/ docs]"
     },
     {
       "type": "graphviz",
@@ -119,6 +119,26 @@
         "text": "See [[More About Algorithmic Markup]]"
       },
       "date": 1552531092599
+    },
+    {
+      "type": "edit",
+      "id": "eedd14de0c0f8279",
+      "item": {
+        "type": "paragraph",
+        "id": "eedd14de0c0f8279",
+        "text": "This plugin renders Graphviz 'dot' markup client-side using the graphvizlib.wasm implementation from HPCC Systems. [https://github.com/hpcc-systems/hpcc-js-wasm source] [https://graphviz.gitlab.io/_pages/doc/info/lang.html manual]"
+      },
+      "date": 1595094166185
+    },
+    {
+      "type": "edit",
+      "id": "eedd14de0c0f8279",
+      "item": {
+        "type": "paragraph",
+        "id": "eedd14de0c0f8279",
+        "text": "This plugin renders Graphviz 'dot' markup client-side using the graphvizlib.wasm implementation from HPCC Systems. [https://github.com/hpcc-systems/hpcc-js-wasm source] [https://graphviz.gitlab.io/documentation/ docs]"
+      },
+      "date": 1595094294266
     }
   ]
 }

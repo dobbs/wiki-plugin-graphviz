@@ -1,7 +1,7 @@
 (function() {
   var bind, emit, expand, moduleLoaded;
 
-  // http://viz-js.com/
+  // https://github.com/hpcc-systems/hpcc-js-wasm
   // https://github.com/fedwiki/wiki/issues/63
 
   expand = text => {
