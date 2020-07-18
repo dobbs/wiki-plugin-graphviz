@@ -379,19 +379,8 @@
     }
   };
 
-  if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {
-    wiki.getModule = _.memoize((url) => new Promise((resolve, reject) => {
-      let script = document.createElement('script')
-      script.type = 'module'
-      script.src = url
-      script.onload = resolve
-      script.onerror = err => reject(new URIError(`script ${url} failed to load. ${err}`))
-      document.head.appendChild(script)
-    }))
-  }
-
   if (typeof window !== "undefined" && window !== null) {
-    moduleLoaded = wiki.getModule('/plugins/graphviz/graphviz-viewer.js')
+    moduleLoaded = import('/plugins/graphviz/graphviz-viewer.js');
     window.plugins.graphviz = {emit, bind};
   }
 
