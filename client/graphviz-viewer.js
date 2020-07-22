@@ -39,7 +39,6 @@ class GraphvizViewer extends HTMLElement {
   }
 
   render() {
-    const self = this
     if (!this.alreadyRendered) {
       this.alreadyRendered = new Promise((resolve, reject) => {
         graphviz.layout(this.dot, "svg", "dot", {
@@ -50,15 +49,13 @@ class GraphvizViewer extends HTMLElement {
           const parser = new DOMParser();
           const svg = parser.parseFromString(svgString, 'image/svg+xml').documentElement
           svg.setAttribute('style', 'width: 100%; height: auto;');
-          //self._clearShadowRoot()
-          //self.shadowRoot.innerHTML = svg
-          self._replaceShadowRoot(svg);
+          this._replaceShadowRoot(svg);
           return svg;
         })
         .then(resolve)
         .catch(err => {
           console.log('render',err);
-          self._replaceShadowRoot(message(err.message))
+          this._replaceShadowRoot(message(err.message))
         });
       })
     }
@@ -66,12 +63,11 @@ class GraphvizViewer extends HTMLElement {
   }
 
   async connectedCallback() {
-    const self = this
     if (super.connectedCallback)
       super.connectedCallback()
     this.render().catch(err => {
       console.log({err})
-      self._replaceShadowRoot(message(err.message))
+      this._replaceShadowRoot(message(err.message))
     })
   }
 
