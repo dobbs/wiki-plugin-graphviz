@@ -1,10 +1,10 @@
 (function() {
-  var bind, emit, expand, moduleLoaded;
+  let moduleLoaded;
 
   // https://github.com/hpcc-systems/hpcc-js-wasm
   // https://github.com/fedwiki/wiki/issues/63
 
-  expand = text => {
+  function expand(text) {
     return text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -13,8 +13,9 @@
   };
 
   async function makedot($item, item) {
-    const {asSlug} = wiki
-    var text = item.text
+    const {asSlug} = wiki;
+    let text = item.text;
+    let m;
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
@@ -322,11 +323,11 @@
   }
 
 
-  emit = ($item, item) => {
+  function emit($item, item) {
     return $item.append(message('loading diagram'))
   };
 
-  bind = async function($item, item) {
+  async function bind($item, item) {
     await moduleLoaded
     $item.dblclick(() => {
       return wiki.textEditor($item, item);
