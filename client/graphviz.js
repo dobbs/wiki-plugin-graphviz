@@ -13,7 +13,18 @@
   };
 
   function includeStaticDotInText(item) {
-    return item;
+    if (item.text.match(/^DOT/)) {
+      return {
+        ...item,
+        text: `${item.text}
+
+STATIC
+
+${item.dot??''}`
+      };
+    } else {
+      return item;
+    }
   }
 
   async function makedot($item, item) {
