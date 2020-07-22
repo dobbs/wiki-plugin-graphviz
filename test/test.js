@@ -48,14 +48,35 @@
         });
       }) ;
       context('when text contains both DOT and STATIC', () => {
-        // hopefully we can prevent this case
-        // or just clean it up by removing the STATIC block
+        // remove the STATIC block and preserve algorithm
+        const item = {
+          type: "graphviz",
+          text: `DOT FROM about-graphviz-plugin
+
+STATIC
+
+strict digraph { A -> B -> C}`,
+          dot: `digraph {
+"Welcome Visitors"->"Recent Changes"
+"Welcome Visitors"->"Local Changes"
+}`
+        };
+        it('recalculates the STATIC block', () => {
+          const result = graphviz.includeStaticDotInText(item);
+          expect(result.text).to.contain(item.text);
+          expect(result.text).to.contain('STATIC');
+          expect(result.text).to.contain(item.dot);
+        });
+        it('appends only one STATIC block to existing text', () => {
+          const result = graphviz.includeStaticDotInText(item);
+          const statics = result.text.match(/(STATIC)/g);
+          expect(statics.length).to.equal(1);
+        });
+
       }) ;
-      context('when text contains omits DOT and contains STATIC', () => {
-        // hopefully we can prevent this case or just clean it up by
-        // removing the STATIC keyword and preserving the remaining
-        // content
       }) ;
+      context('when text omits DOT and contains STATIC', () => {
+        // remove the STATIC keyword and preserve remaining content
     });
   });
 
