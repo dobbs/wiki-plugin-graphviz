@@ -12,6 +12,10 @@
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
   };
 
+  function includeStaticDotInText(item) {
+    return item;
+  }
+
   async function makedot($item, item) {
     const {asSlug} = wiki;
     let text = item.text;
@@ -387,7 +391,7 @@
   }
 
   if (typeof module !== "undefined" && module !== null) {
-    module.exports = {expand};
+    module.exports = {expand, includeStaticDotInText};
   }
 
 }).call(this);

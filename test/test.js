@@ -16,6 +16,14 @@
     describe('authors can convert algorithmic diagrams into static diagrams', () => {
       context('when text omits both DOT and STATIC', () => {
         // static diagram
+        const item = {
+          type: "graphviz",
+          text: `strict digraph { A -> {B C} -> D }`
+        };
+        it('preserves existing text', () => {
+          const result = graphviz.includeStaticDotInText(item);
+          return expect(result.text).to.equal(item.text);
+        });
       }) ;
       context('when text contains DOT and omits STATIC', () => {
         // algorithmic diagram
