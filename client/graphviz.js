@@ -39,7 +39,9 @@ ${item.dot??''}`
   function cleanBeforeMakedot(item) {
     let text = item.text;
     if (text.match(/^DOT/) && text.match(/STATIC/)) {
-      text = text.split(/STATIC/)[0];
+      text = text.split(/STATIC/)[0].trim();
+    } else if (! text.match(/^DOT/) && text.match(/STATIC/)) {
+      text = text.split(/STATIC/)[1].trim();
     }
     return {...item, text};
   }

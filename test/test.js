@@ -106,7 +106,17 @@ strict digraph { A -> B -> C}`
         });
       });
       context('when text omits DOT and contains STATIC', () => {
-        it('removes STATIC keyword from static diagram');
+        const item = {
+          type: 'graphviz',
+          text: `STATIC
+
+strict digraph { A -> B -> C}`
+        };
+        it('removes STATIC keyword from static diagram', () => {
+          const result = graphviz.cleanBeforeMakedot(item);
+          expect(result.text).not.to.contain('STATIC');
+          expect(result.text).to.contain('strict digraph { A -> B -> C}');
+        });
       });
       context('when text contains DOT and omits STATIC', () => {
         it('leaves algorithmic diagram text alone');
