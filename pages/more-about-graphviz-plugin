@@ -1,0 +1,189 @@
+{
+  "title": "More About Graphviz Plugin",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "e93c02b73c2c5a3a",
+      "text": "Here we describe an example workflow to convert an algorithmic diagram into a static diagram."
+    },
+    {
+      "type": "paragraph",
+      "id": "3f46056c64ce1670",
+      "text": "Create a page named [[Hello World]]."
+    },
+    {
+      "type": "paragraph",
+      "id": "78e469ce1a05c549",
+      "text": "Shift-click on the [[Lineup Diagram]]."
+    },
+    {
+      "type": "paragraph",
+      "id": "1475991d09382b8b",
+      "text": "Shift-drag the graphviz diagram to the Hello World page to make a copy."
+    },
+    {
+      "type": "paragraph",
+      "id": "46f5945167f5afef",
+      "text": "Double-click the copy on Hello World. You'll see something like this:"
+    },
+    {
+      "type": "code",
+      "id": "834e6c8a332bd9ac",
+      "text": "DOT strict digraph\n  rankdir=LR\n  node [shape=box style=filled fillcolor=bisque]\n  LINEUP\n    HERE NODE\n  LINEUP\n    HERE\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE\n\nSTATIC\n\n..."
+    },
+    {
+      "type": "paragraph",
+      "id": "e14908b038f4614f",
+      "text": "The text below STATIC is the graphviz dot language that was generated from the program and the current lineup. Delete the text from DOT to STATIC, inclusive. And save the diagram."
+    },
+    {
+      "type": "paragraph",
+      "id": "bcee93357a22ea59",
+      "text": "Now you have a copy of the lineup that no longer changes depending on context. You have a more permanent record."
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "More About Graphviz Plugin",
+        "story": []
+      },
+      "date": 1595479209393
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "e93c02b73c2c5a3a"
+      },
+      "id": "e93c02b73c2c5a3a",
+      "type": "add",
+      "date": 1595479257683
+    },
+    {
+      "type": "edit",
+      "id": "e93c02b73c2c5a3a",
+      "item": {
+        "type": "paragraph",
+        "id": "e93c02b73c2c5a3a",
+        "text": "Here we describe an example workflow to convert an algorithmic diagram into a static diagram."
+      },
+      "date": 1595479513014
+    },
+    {
+      "type": "add",
+      "id": "3f46056c64ce1670",
+      "item": {
+        "type": "paragraph",
+        "id": "3f46056c64ce1670",
+        "text": "Create a page named [[Hello World]]."
+      },
+      "after": "e93c02b73c2c5a3a",
+      "date": 1595479665564
+    },
+    {
+      "type": "add",
+      "id": "78e469ce1a05c549",
+      "item": {
+        "type": "paragraph",
+        "id": "78e469ce1a05c549",
+        "text": "Shift-click on the [[Lineup Diagram]]."
+      },
+      "after": "3f46056c64ce1670",
+      "date": 1595479691505
+    },
+    {
+      "type": "add",
+      "id": "1475991d09382b8b",
+      "item": {
+        "type": "paragraph",
+        "id": "1475991d09382b8b",
+        "text": "Drag a copy of the graphviz diagram to the Hello World page."
+      },
+      "after": "78e469ce1a05c549",
+      "date": 1595479715114
+    },
+    {
+      "type": "edit",
+      "id": "1475991d09382b8b",
+      "item": {
+        "type": "paragraph",
+        "id": "1475991d09382b8b",
+        "text": "Shift-drag the graphviz diagram to the Hello World page to make a copy."
+      },
+      "date": 1595479777767
+    },
+    {
+      "type": "add",
+      "id": "46f5945167f5afef",
+      "item": {
+        "type": "paragraph",
+        "id": "46f5945167f5afef",
+        "text": "Double-click the copy on Hello World."
+      },
+      "after": "1475991d09382b8b",
+      "date": 1595479805368
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "834e6c8a332bd9ac"
+      },
+      "id": "834e6c8a332bd9ac",
+      "type": "add",
+      "after": "46f5945167f5afef",
+      "date": 1595479807630
+    },
+    {
+      "type": "edit",
+      "id": "834e6c8a332bd9ac",
+      "item": {
+        "type": "code",
+        "id": "834e6c8a332bd9ac",
+        "text": "DOT strict digraph\n  rankdir=LR\n  node [shape=box style=filled fillcolor=bisque]\n  LINEUP\n    HERE NODE\n  LINEUP\n    HERE\n      node [fillcolor=palegreen]\n      LINKS HERE -> NODE\n\nSTATIC\n\n..."
+      },
+      "date": 1595479850884
+    },
+    {
+      "type": "edit",
+      "id": "46f5945167f5afef",
+      "item": {
+        "type": "paragraph",
+        "id": "46f5945167f5afef",
+        "text": "Double-click the copy on Hello World. You'll see something like this:"
+      },
+      "date": 1595479860985
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "e14908b038f4614f"
+      },
+      "id": "e14908b038f4614f",
+      "type": "add",
+      "after": "834e6c8a332bd9ac",
+      "date": 1595479872139
+    },
+    {
+      "type": "edit",
+      "id": "e14908b038f4614f",
+      "item": {
+        "type": "paragraph",
+        "id": "e14908b038f4614f",
+        "text": "The text below STATIC is the graphviz dot language that was generated from the program and the current lineup. Delete the text from DOT to STATIC, inclusive. And save the diagram."
+      },
+      "date": 1595479999574
+    },
+    {
+      "type": "add",
+      "id": "bcee93357a22ea59",
+      "item": {
+        "type": "paragraph",
+        "id": "bcee93357a22ea59",
+        "text": "Now you have a copy of the lineup that no longer changes depending on context. You have a more permanent record."
+      },
+      "after": "e14908b038f4614f",
+      "date": 1595480156424
+    }
+  ]
+}
