@@ -364,7 +364,7 @@ ${item.dot??''}`
   async function bind($item, item) {
     await moduleLoaded
     $item.dblclick(() => {
-      return wiki.textEditor($item, item);
+      return wiki.textEditor($item, includeStaticDotInText($item.data().item));
     });
 
     function download(filename, text) {
@@ -387,7 +387,7 @@ ${item.dot??''}`
     })
 
     try {
-      let dot = await makedot($item, item)
+      let dot = await makedot($item, cleanBeforeMakedot(item))
       $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
       let $viewer = $item.find('graphviz-viewer')
       let viewer = $viewer.get(0);
