@@ -119,10 +119,24 @@ strict digraph { A -> B -> C}`
         });
       });
       context('when text contains DOT and omits STATIC', () => {
-        it('leaves algorithmic diagram text alone');
+        const item = {
+          type: 'graphviz',
+          text: 'DOT FROM about-graphviz-plugin'
+        };
+        it('leaves algorithmic diagram text alone', () => {
+          const result = graphviz.cleanBeforeMakedot(item);
+          expect(result.text).to.equal(item.text);
+        });
       });
       context('when text omits both DOT and STATIC', () => {
-        it('leaves static diagram text alone');
+        const item = {
+          type: 'graphviz',
+          text: 'strict digraph { A -> B -> C}'
+        };
+        it('leaves static diagram text alone', () => {
+          const result = graphviz.cleanBeforeMakedot(item);
+          expect(result.text).to.equal(item.text);
+        });
       })
     });
   });
