@@ -13,11 +13,12 @@
   };
 
   function includeStaticDotInText(item) {
-    if (item.text.match(/STATIC/)) {
-      const text = item.text.split(/STATIC/)[0];
-      item.text = text;
-    }
     if (item.text.match(/^DOT/)) {
+      if (item.text.match(/STATIC/)) {
+        const text = item.text.split(/STATIC/)[0];
+        item.text = text;
+      }
+
       return {
         ...item,
         text: `${item.text}
@@ -27,6 +28,10 @@ STATIC
 ${item.dot??''}`
       };
     } else {
+      if (item.text.match(/STATIC/)) {
+        const text = item.text.split(/STATIC/)[1];
+        item.text = text;
+      }
       return item;
     }
   }

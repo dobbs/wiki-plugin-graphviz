@@ -74,9 +74,19 @@ strict digraph { A -> B -> C}`,
         });
 
       }) ;
-      }) ;
       context('when text omits DOT and contains STATIC', () => {
-        // remove the STATIC keyword and preserve remaining content
+        const item = {
+          type: "graphviz",
+          text: `STATIC
+
+strict digraph { A -> B -> C}`
+        };
+        it('removes the STATIC keyword and preserves remaining content', () => {
+          const result = graphviz.includeStaticDotInText(item);
+          expect(result.text).not.to.contain('STATIC');
+          expect(result.text).to.contain('strict digraph { A -> B -> C}');
+        });
+      });
     });
   });
 
