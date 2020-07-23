@@ -1,10 +1,10 @@
 (function() {
-  var bind, emit, expand, moduleLoaded;
+  let moduleLoaded;
 
-  // http://viz-js.com/
+  // https://github.com/hpcc-systems/hpcc-js-wasm
   // https://github.com/fedwiki/wiki/issues/63
 
-  expand = text => {
+  function expand(text) {
     return text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -12,9 +12,44 @@
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
   };
 
+  function includeStaticDotInText(item) {
+    if (item.text.match(/^DOT/)) {
+      if (item.text.match(/STATIC/)) {
+        const text = item.text.split(/STATIC/)[0];
+        item.text = text;
+      }
+
+      return {
+        ...item,
+        text: `${item.text}
+
+STATIC
+
+${item.dot??''}`
+      };
+    } else {
+      if (item.text.match(/STATIC/)) {
+        const text = item.text.split(/STATIC/)[1];
+        item.text = text;
+      }
+      return item;
+    }
+  }
+
+  function cleanBeforeMakedot(item) {
+    let text = item.text;
+    if (text.match(/^DOT/) && text.match(/STATIC/)) {
+      text = text.split(/STATIC/)[0].trim();
+    } else if (! text.match(/^DOT/) && text.match(/STATIC/)) {
+      text = text.split(/STATIC/)[1].trim();
+    }
+    return {...item, text};
+  }
+
   async function makedot($item, item) {
-    const asSlug = (name) => name.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
-    var text = item.text
+    const {asSlug} = wiki;
+    let text = item.text;
+    let m;
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
       let site = $item.parents('.page').data('site')||location.host
       let slug = m[1]
@@ -322,14 +357,14 @@
   }
 
 
-  emit = ($item, item) => {
+  function emit($item, item) {
     return $item.append(message('loading diagram'))
   };
 
-  bind = async function($item, item) {
+  async function bind($item, item) {
     await moduleLoaded
     $item.dblclick(() => {
-      return wiki.textEditor($item, item);
+      return wiki.textEditor($item, includeStaticDotInText($item.data().item));
     });
 
     function download(filename, text) {
@@ -352,18 +387,19 @@
     })
 
     try {
-      let dot = await makedot($item, item)
+      let dot = await makedot($item, cleanBeforeMakedot(item))
       $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
       let $viewer = $item.find('graphviz-viewer')
+      let viewer = $viewer.get(0);
       $viewer.dblclick(event => {
         if(event.shiftKey) {
           event.stopPropagation()
-          let svg = $item.find('graphviz-viewer').get(0)
-              .shadowRoot.querySelector('svg').cloneNode(true)
-          wiki.dialog('Graphviz', svg)
+          wiki.dialog('Graphviz', item.svg)
         }
       })
-      $viewer.get(0).render().then(svg => {
+      viewer.render().then(svg => {
+        item.dot = viewer.dot
+        item.svg = viewer.svg
         $(svg).find('.node').click((event)=> {
           event.stopPropagation()
           event.preventDefault()
@@ -379,24 +415,13 @@
     }
   };
 
-  if (typeof wiki !== "undefined" && typeof wiki.getModule === "undefined") {
-    wiki.getModule = _.memoize((url) => new Promise((resolve, reject) => {
-      let script = document.createElement('script')
-      script.type = 'module'
-      script.src = url
-      script.onload = resolve
-      script.onerror = err => reject(new URIError(`script ${url} failed to load. ${err}`))
-      document.head.appendChild(script)
-    }))
-  }
-
   if (typeof window !== "undefined" && window !== null) {
-    moduleLoaded = wiki.getModule('/plugins/graphviz/graphviz-viewer.js')
+    moduleLoaded = import('/plugins/graphviz/graphviz-viewer.js');
     window.plugins.graphviz = {emit, bind};
   }
 
   if (typeof module !== "undefined" && module !== null) {
-    module.exports = {expand};
+    module.exports = {expand, includeStaticDotInText, cleanBeforeMakedot};
   }
 
 }).call(this);

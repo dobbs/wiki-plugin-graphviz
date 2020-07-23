@@ -22,52 +22,53 @@ class GraphvizViewer extends HTMLElement {
     this.attachShadow({mode: 'open'})
     this.shadowRoot.appendChild(template.content.cloneNode(true));
     this.message('drawing diagram');
+    this._svg = '';
   }
+
+  get dot() {
+    // see https://stackoverflow.com/a/34064434/1074208
+    return new DOMParser()
+      .parseFromString(this.innerHTML, 'text/html')
+      .documentElement
+      .textContent;
+  }
+  get svg() {return this._svg;}
 
   message(text) {
     this.shadowRoot.querySelector('#message').innerHTML = text;
   }
 
   render() {
-    const self = this
     if (!this.alreadyRendered) {
       this.alreadyRendered = new Promise((resolve, reject) => {
-        const dot = self.decodedHTML()
-        graphviz.layout(dot, "svg", "dot", {
+        graphviz.layout(this.dot, "svg", "dot", {
           wasmFolder: wasmFolder
         })
         .then(svgString => {
-          const parser = new DOMParser()
+          this._svg = svgString;
+          const parser = new DOMParser();
           const svg = parser.parseFromString(svgString, 'image/svg+xml').documentElement
-          svg.setAttribute('style', 'width: 100%; height: auto;')
-          //self._clearShadowRoot()
-          //self.shadowRoot.innerHTML = svg
-          self._replaceShadowRoot(svg)
-          return svg
+          svg.setAttribute('style', 'width: 100%; height: auto;');
+          this._replaceShadowRoot(svg);
+          return svg;
         })
         .then(resolve)
-        .catch(err => {console.log('render',err); self._replaceShadowRoot(message(err.message))})
+        .catch(err => {
+          console.log('render',err);
+          this._replaceShadowRoot(message(err.message))
+        });
       })
     }
     return this.alreadyRendered
   }
 
   async connectedCallback() {
-    const self = this
     if (super.connectedCallback)
       super.connectedCallback()
     this.render().catch(err => {
       console.log({err})
-      self._replaceShadowRoot(message(err.message))
+      this._replaceShadowRoot(message(err.message))
     })
-  }
-
-  // see https://stackoverflow.com/a/34064434/1074208
-  decodedHTML() {
-    return new DOMParser()
-      .parseFromString(this.innerHTML, 'text/html')
-      .documentElement
-      .textContent
   }
 
   _replaceShadowRoot(el) {
