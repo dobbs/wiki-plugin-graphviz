@@ -88,6 +88,33 @@ strict digraph { A -> B -> C}`
         });
       });
     });
+
+    describe('cleanBeforeMakedot()', () => {
+      context('when text contains DOT and STATIC', () => {
+        const item = {
+          type: 'graphviz',
+          text: `DOT FROM about-graphviz-plugin
+
+STATIC
+
+strict digraph { A -> B -> C}`
+        };
+        it('removes STATIC block from algorithmic diagram', () => {
+          const result = graphviz.cleanBeforeMakedot(item);
+          expect(result.text).not.to.contain('STATIC');
+          expect(result.text).not.to.contain('strict digraph { A -> B -> C}');
+        });
+      });
+      context('when text omits DOT and contains STATIC', () => {
+        it('removes STATIC keyword from static diagram');
+      });
+      context('when text contains DOT and omits STATIC', () => {
+        it('leaves algorithmic diagram text alone');
+      });
+      context('when text omits both DOT and STATIC', () => {
+        it('leaves static diagram text alone');
+      })
+    });
   });
 
 }).call(this);

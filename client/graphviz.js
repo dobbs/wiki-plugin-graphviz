@@ -36,6 +36,14 @@ ${item.dot??''}`
     }
   }
 
+  function cleanBeforeMakedot(item) {
+    let text = item.text;
+    if (text.match(/^DOT/) && text.match(/STATIC/)) {
+      text = text.split(/STATIC/)[0];
+    }
+    return {...item, text};
+  }
+
   async function makedot($item, item) {
     const {asSlug} = wiki;
     let text = item.text;
@@ -411,7 +419,7 @@ ${item.dot??''}`
   }
 
   if (typeof module !== "undefined" && module !== null) {
-    module.exports = {expand, includeStaticDotInText};
+    module.exports = {expand, includeStaticDotInText, cleanBeforeMakedot};
   }
 
 }).call(this);
