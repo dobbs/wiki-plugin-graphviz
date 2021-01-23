@@ -236,25 +236,29 @@ ${item.dot??''}`
           } else
 
           if (ir.match(/^BACKLINKS/)) {
-            let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
-            let links = Object.values(backlinks).map(bl => bl.title)
-            let tree = nest()
-            links.map((link) => {
-              if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {
-                dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
-              } else
-                if (m = ir.match(/^BACKLINKS NODE (->|--) HERE/)) {
-                  dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+            if (! wiki.neighborhoodObject.backLinks) {
+              trouble("can't do backlinks. wiki-client is missing backlinks", ir)
+            } else {
+              let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
+              let links = Object.values(backlinks).map(bl => bl.title)
+              let tree = nest()
+              links.map((link) => {
+                if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {
+                  dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
                 } else
-                  if (!ir.match(/^BACKLINKS$/)) {
-                    trouble("can't do link", ir)
-                  }
-              if (tree.length) {
-                let new_context = Object.assign({},context,{name:link})
-                new_context.promise = polyget(new_context)
-                deeper.push({tree, context:new_context})
-              }
-            })
+                  if (m = ir.match(/^BACKLINKS NODE (->|--) HERE/)) {
+                    dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+                  } else
+                    if (!ir.match(/^BACKLINKS$/)) {
+                      trouble("can't do backlink", ir)
+                    }
+                if (tree.length) {
+                  let new_context = Object.assign({},context,{name:link})
+                  new_context.promise = polyget(new_context)
+                  deeper.push({tree, context:new_context})
+                }
+              })
+            }
           } else
 
           if (ir.match(/^GRAPH$/)) {
