@@ -79,22 +79,37 @@
     {
       "type": "paragraph",
       "id": "536f6fe3aeff96e5",
-      "text": "LINK"
+      "text": "LINKS"
     },
     {
       "type": "paragraph",
       "id": "e2e98882fb07b46e",
-      "text": "LINK HERE -> NODE"
+      "text": "LINKS HERE -> NODE"
     },
     {
       "type": "paragraph",
       "id": "36deb4964baa5344",
-      "text": "LINK NODE -> HERE"
+      "text": "LINKS NODE -> HERE"
     },
     {
       "type": "paragraph",
       "id": "ce8fc80833ef13e2",
       "text": "The page in context or WHERE-portions thereof are examined for internal links. These become the name in context for nested markup. Optionally render an edge from/to the page in context to/from each new name in context."
+    },
+    {
+      "type": "paragraph",
+      "id": "7c414d29038d7422",
+      "text": "BACKLINKS HERE -> NODE"
+    },
+    {
+      "type": "paragraph",
+      "id": "cc315b5c25a6dbd7",
+      "text": "BACKLINKS NODE -> HERE"
+    },
+    {
+      "type": "paragraph",
+      "id": "c366dfe36c4491f1",
+      "text": "The neighborhood is consulted for backlinks to the page in context. These become the name in context for nested markup. Optionally render an edge from/to the page in context to/from each new name in context."
     },
     {
       "type": "paragraph",
@@ -762,6 +777,69 @@
       "type": "fork",
       "site": "ward.asia.wiki.org",
       "date": 1551848565370
+    },
+    {
+      "type": "edit",
+      "id": "536f6fe3aeff96e5",
+      "item": {
+        "type": "paragraph",
+        "id": "536f6fe3aeff96e5",
+        "text": "LINKS"
+      },
+      "date": 1611439568146
+    },
+    {
+      "type": "edit",
+      "id": "e2e98882fb07b46e",
+      "item": {
+        "type": "paragraph",
+        "id": "e2e98882fb07b46e",
+        "text": "LINKS HERE -> NODE"
+      },
+      "date": 1611439571776
+    },
+    {
+      "type": "edit",
+      "id": "36deb4964baa5344",
+      "item": {
+        "type": "paragraph",
+        "id": "36deb4964baa5344",
+        "text": "LINKS NODE -> HERE"
+      },
+      "date": 1611439576210
+    },
+    {
+      "type": "add",
+      "id": "7c414d29038d7422",
+      "item": {
+        "type": "paragraph",
+        "id": "7c414d29038d7422",
+        "text": "BACKLINKS HERE -> NODE"
+      },
+      "after": "ce8fc80833ef13e2",
+      "date": 1611439684075
+    },
+    {
+      "type": "add",
+      "id": "cc315b5c25a6dbd7",
+      "item": {
+        "type": "paragraph",
+        "id": "cc315b5c25a6dbd7",
+        "text": "BACKLINKS NODE -> HERE"
+      },
+      "after": "7c414d29038d7422",
+      "date": 1611439694326
+    },
+    {
+      "type": "add",
+      "id": "c366dfe36c4491f1",
+      "item": {
+        "type": "paragraph",
+        "id": "c366dfe36c4491f1",
+        "text": "The neighborhood is consulted for backlinks to the page in context. These become the name in context for nested markup. Optionally render an edge from/to the page in context to/from each new name in context."
+      },
+      "after": "cc315b5c25a6dbd7",
+      "date": 1611439914193
     }
   ]
 }
