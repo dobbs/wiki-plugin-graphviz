@@ -330,6 +330,10 @@ ${item.dot??''}`
             } catch {
               throw new Error("can't do LINEUP yet")
             }
+          } else
+
+          if (ir.match(/^STATIC/)) {
+            break;
           } else trouble("can't do", ir)
 
         } else {
