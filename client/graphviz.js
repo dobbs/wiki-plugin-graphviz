@@ -235,6 +235,32 @@ ${item.dot??''}`
             })
           } else
 
+          if (ir.match(/^BACKLINKS/)) {
+            if (! wiki.neighborhoodObject.backLinks) {
+              console.error("graphviz plugin skipping backlinks because wiki-client is missing backlinks", ir)
+            } else {
+              let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
+              let links = Object.values(backlinks).map(bl => bl.title)
+              let tree = nest()
+              links.map((link) => {
+                if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {
+                  dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
+                } else
+                  if (m = ir.match(/^BACKLINKS NODE (->|--) HERE/)) {
+                    dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+                  } else
+                    if (!ir.match(/^BACKLINKS$/)) {
+                      trouble("can't do backlink", ir)
+                    }
+                if (tree.length) {
+                  let new_context = Object.assign({},context,{name:link})
+                  new_context.promise = polyget(new_context)
+                  deeper.push({tree, context:new_context})
+                }
+              })
+            }
+          } else
+
           if (ir.match(/^GRAPH$/)) {
             for (let item of context.want) {
               if (item.type == 'graph') {
@@ -266,13 +292,16 @@ ${item.dot??''}`
                 page = poly.page
               }
             } catch (err) {}
+
+            let m
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
               } else
-              if (ir.match(/^HERE NODE \w+/)) {
+              if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
+                console.log("labeled node", m, m[1], quote(m[1]))
                 let kind = context.graph.match(/digraph/) ? '->' : '--'
-                dot.push(`${quote(ir)} ${kind} ${quote(context.name)} [style=dotted]`)
+                dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
               if (!ir.match(/^HERE$/)) {
                 trouble("can't do here", ir)
@@ -330,6 +359,10 @@ ${item.dot??''}`
             } catch {
               throw new Error("can't do LINEUP yet")
             }
+          } else
+
+          if (ir.match(/^STATIC/)) {
+            break;
           } else trouble("can't do", ir)
 
         } else {
