@@ -293,13 +293,15 @@ ${item.dot??''}`
               }
             } catch (err) {}
 
+            let m
             if (page) {
               if (ir.match(/^HERE NODE$/)) {
                 dot.push(quote(context.name))
               } else
-              if (ir.match(/^HERE NODE \w+/)) {
+              if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
+                console.log("labeled node", m, m[1], quote(m[1]))
                 let kind = context.graph.match(/digraph/) ? '->' : '--'
-                dot.push(`${quote(ir)} ${kind} ${quote(context.name)} [style=dotted]`)
+                dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
               if (!ir.match(/^HERE$/)) {
                 trouble("can't do here", ir)
