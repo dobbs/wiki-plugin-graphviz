@@ -422,7 +422,27 @@ ${item.dot??''}`
 
     try {
       let dot = await makedot($item, cleanBeforeMakedot(item))
-      $item.find('.viewer').html(`<graphviz-viewer>${dot}</graphviz-viewer>`)
+      $item.find('.viewer').html(`
+<style>
+.graphviz nav {display: flex; flex-direction: row; place-content: flex-end;}
+.graphviz nav a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin-left: 3px;
+}
+</style>
+<nav>
+<a href="#" data-action="download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="black"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
+<a href="#" data-action="togglezoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
+<a href="#" data-id="togglefreeze">❄</a>
+</nav>
+<graphviz-viewer>${dot}</graphviz-viewer>`)
       let $viewer = $item.find('graphviz-viewer')
       let viewer = $viewer.get(0);
       $viewer.dblclick(event => {
