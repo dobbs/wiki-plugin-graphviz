@@ -434,14 +434,18 @@ ${item.dot??''}`
       viewer.render().then(svg => {
         item.dot = viewer.dot
         item.svg = viewer.svg
-        $(svg).find('.node').click((event)=> {
+        function click(event) {
           event.stopPropagation()
           event.preventDefault()
-          let node = $(event.target).parents('.node').find('title').text().replace(/\\n/g,' ')
-          console.log('click',node)
-          let page = event.shiftKey ? null : $item.parents('.page')
-          wiki.doInternalLink(node, page)
-        })
+          const node = event.target.closest('.node')
+          const title = Array.from(
+            node.querySelectorAll("text")
+          ).map(el => el.innerHTML.trim()).join(" ")
+          let $page = event.shiftKey ? null : $item.parents('.page')
+          console.log('click', title)
+          wiki.doInternalLink(title, $page)
+        }
+        svg.addEventListener("click", click)
       })
     } catch (err) {
       console.log('makedot',err)
