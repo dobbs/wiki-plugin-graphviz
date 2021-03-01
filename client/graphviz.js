@@ -106,7 +106,8 @@ ${item.dot??''}`
     }
 
     function quote (string) {
-      return `"${string.replace(/ +/g,'\n').replace(/"/g,'\"')}"`
+      const quoted = string.replace(/ +/g,'\n').replace(/"/g,'\\"')
+      return `"${quoted}"`
     }
 
     function trouble (text, detail) {
