@@ -438,12 +438,17 @@ ${item.dot??''}`
           event.stopPropagation()
           event.preventDefault()
           const node = event.target.closest('.node')
-          const title = Array.from(
-            node.querySelectorAll("text")
-          ).map(el => el.innerHTML.trim()).join(" ")
-          let $page = event.shiftKey ? null : $item.parents('.page')
-          console.log('click', title)
-          wiki.doInternalLink(title, $page)
+          const edge = event.target.closest('.edge')
+          if (node||edge) {
+            const title = Array.from(
+              (node||edge).querySelectorAll("text")
+            ).map(el => el.innerHTML.trim()).join(" ")
+            let $page = event.shiftKey ? null : $item.parents('.page')
+            if (title) {
+              console.log('click', title)
+              wiki.doInternalLink(title, $page)
+            }
+          }
         }
         svg.addEventListener("click", click)
       })
