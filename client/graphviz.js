@@ -411,13 +411,24 @@ ${item.dot??''}`
       document.body.removeChild(element);
     }
 
-    $item.click((e) => {
-      if(!e.shiftKey) return
-      e.stopPropagation()
-      e.preventDefault()
-      let slug = $item.parents('.page').attr('id')
-      let svg = $item.find('graphviz-viewer').get(0).shadowRoot.querySelector('svg').outerHTML
-      download(`${slug}.svg`, svg)
+    $item.click(event => {
+      const {target} = event
+      const {action} = (target.closest("a")||{}).dataset
+
+      if (!action) {
+        return
+      }
+      event.stopPropagation()
+      event.preventDefault()
+      switch (action) {
+      case "download":
+        const slug = $item.parents('.page').attr('id')
+        download(`${slug}.svg`, item.svg)
+        break
+      case "zoom":
+        wiki.dialog('Graphviz', item.svg)
+        break
+      }
     })
 
     try {
@@ -450,18 +461,11 @@ ${item.dot??''}`
       $item.find('.viewer').html(`
 <nav class="actions">
 <a href="#" data-action="download" title="Download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="grey"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
-<a href="#" data-action="togglezoom" title="Zoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path fill="grey" d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
-<a href="#" data-action="togglefreeze" title="Freeze">❄</a>
+<a href="#" data-action="zoom" title="Zoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path fill="grey" d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
 </nav>
 <graphviz-viewer>${dot}</graphviz-viewer>`)
       let $viewer = $item.find('graphviz-viewer')
       let viewer = $viewer.get(0);
-      $viewer.dblclick(event => {
-        if(event.shiftKey) {
-          event.stopPropagation()
-          wiki.dialog('Graphviz', item.svg)
-        }
-      })
       viewer.render().then(svg => {
         item.dot = viewer.dot
         item.svg = viewer.svg
