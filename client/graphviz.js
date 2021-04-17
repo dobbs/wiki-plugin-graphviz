@@ -425,30 +425,33 @@ ${item.dot??''}`
       $item.prepend(`
 <style>
 .graphviz {position: relative;}
-.graphviz:hover .buttons {
+.graphviz:hover .actions {
   position: absolute; top: 0; right: 0;
-  padding: 3px; background: white; box-shadow: 2px 2px 6px #999;
+  padding: 5px; background: white; box-shadow: 2px 2px 6px #999;
   display: flex; flex-direction: row; place-content: flex-end;
+  border-radius: 5px;
 }
-.graphviz .buttons {display: none;}
-.graphviz nav a {
+.graphviz .actions {display: none;}
+.graphviz .actions a {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 30px;
   height: 30px;
   background: #fff;
-  border: 1px solid black;
+  border: 0;
   border-radius: 2px;
-  margin-left: 3px;
+}
+.graphviz .actions a:hover {
+  background: #eee;
 }
 </style>
 `)
       $item.find('.viewer').html(`
-<nav class="buttons">
-<a href="#" data-action="download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="black"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
-<a href="#" data-action="togglezoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
-<a href="#" data-id="togglefreeze">❄</a>
+<nav class="actions">
+<a href="#" data-action="download" title="Download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="grey"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
+<a href="#" data-action="togglezoom" title="Zoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path fill="grey" d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
+<a href="#" data-action="togglefreeze" title="Freeze">❄</a>
 </nav>
 <graphviz-viewer>${dot}</graphviz-viewer>`)
       let $viewer = $item.find('graphviz-viewer')
