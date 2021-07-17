@@ -477,7 +477,7 @@ ${item.dot??''}`
           if (node||edge) {
             const title = Array.from(
               (node||edge).querySelectorAll("text")
-            ).map(el => el.innerHTML.trim()).join(" ")
+            ).map(el => el.textContent.trim()).join(" ")
             let $page = event.shiftKey ? null : $item.parents('.page')
             if (title) {
               console.log('click', title)
