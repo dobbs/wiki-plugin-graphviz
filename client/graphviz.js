@@ -397,7 +397,7 @@ ${item.dot??''}`
 
   async function bind($item, item) {
     await moduleLoaded
-    $item.dblclick(() => {
+    $item.on('dblclick', () => {
       return wiki.textEditor($item, includeStaticDotInText($item.data().item));
     });
 
@@ -411,7 +411,7 @@ ${item.dot??''}`
       document.body.removeChild(element);
     }
 
-    $item.click(event => {
+    $item.on('click', event => {
       const {target} = event
       const {action} = (target.closest("a")||{}).dataset
 
