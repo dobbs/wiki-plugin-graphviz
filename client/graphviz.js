@@ -478,12 +478,12 @@ ${item.dot??''}`
             const title = Array.from(
               (node||edge).querySelectorAll("text")
             ).map(el => el.textContent.trim()).join(" ")
-            let $page = event.shiftKey ? null : $item.parents('.page')
+            let $page = $item.parents('.page')
             if (title) {
               console.log('click', title)
               // set context for doInternalLink
               wiki.pageHandler.context = wiki.lineup.atKey($page.data('key')).getContext()
-              wiki.doInternalLink(title, $page)
+              wiki.doInternalLink(title, event.shiftKey ? null : $page)
             }
           }
         }
