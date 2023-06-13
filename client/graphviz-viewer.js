@@ -1,8 +1,7 @@
 "use strict"
 
-import {graphviz} from './wasm/index.es6.js';
-
-const wasmFolder = "/plugins/graphviz/wasm"
+import {Graphviz} from './hpcc/graphviz.js'
+const graphviz = await Graphviz.load()
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -39,36 +38,18 @@ class GraphvizViewer extends HTMLElement {
   }
 
   render() {
-    if (!this.alreadyRendered) {
-      this.alreadyRendered = new Promise((resolve, reject) => {
-        graphviz.layout(this.dot, "svg", "dot", {
-          wasmFolder: wasmFolder
-        })
-        .then(svgString => {
-          this._svg = svgString;
-          const parser = new DOMParser();
-          const svg = parser.parseFromString(svgString, 'image/svg+xml').documentElement
-          svg.setAttribute('style', 'width: 100%; height: auto;');
-          this._replaceShadowRoot(svg);
-          return svg;
-        })
-        .then(resolve)
-        .catch(err => {
-          console.log('render',err);
-          this._replaceShadowRoot(message(err.message))
-        });
-      })
-    }
-    return this.alreadyRendered
+    this._svg = graphviz.dot(this.dot)
+    const parser = new DOMParser();
+    const svg = parser.parseFromString(this._svg, 'image/svg+xml').documentElement
+    svg.setAttribute('style', 'width: 100%; height: auto;');
+    this._replaceShadowRoot(svg);
+    return Promise.resolve(svg)
   }
 
   async connectedCallback() {
     if (super.connectedCallback)
       super.connectedCallback()
-    this.render().catch(err => {
-      console.log({err})
-      this._replaceShadowRoot(message(err.message))
-    })
+    await this.render()
   }
 
   _replaceShadowRoot(el) {
