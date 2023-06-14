@@ -22,7 +22,6 @@ This plugin, type: graphviz, extends the markup of the federated wiki.
 
     npm version patch
     TAG="v$(jq -r .version package.json)"
-    git tag -am "" "$TAG"
     git push --atomic origin main "$TAG"
     npm publish
 
