@@ -426,7 +426,16 @@ ${item.dot??''}`
         download(`${slug}.svg`, item.svg)
         break
       case "zoom":
-        wiki.dialog('Graphviz', item.svg)
+        // wiki.dialog('Graphviz', item.svg)
+        const pageKey = $item.parents('.page').data('key')
+        const graphvizDialog = window.open('/plugins/graphviz/dialog/#', 'graphviz', 'popup,height=600,width=800')
+        if (graphvizDialog.location.pathname !== '/plugins/graphviz/dialog/') {
+          graphvizDialog.addEventListener('load', (event) => {
+            graphvizDialog.postMessage({ svg: item.svg, pageKey }, window.origin)
+          })
+        } else {
+          graphvizDialog.postMessage({ svg: item.svg, pageKey }, window.origin)
+        }
         break
       }
     })
@@ -495,9 +504,33 @@ ${item.dot??''}`
     }
   };
 
+  function graphvizListener(event) {
+    const { data } = event
+    const { action, keepLineup=false, pageKey=null, title=null } = data;
+
+    let $page = null
+    if (pageKey != null) {
+      $page = keepLineup ? null : $('.page').filter((i, el) => $(el).data('key') == pageKey)
+    }
+
+    switch (action) {
+      case 'doInternalLink':
+        wiki.pageHandler.context = wiki.lineup.atKey(pageKey).getContext()
+        wiki.doInternalLink(title, $page)
+        break
+      default:
+        console.error({where:'graphvizListener', message: "unknown action", data})
+    }
+  }
+
   if (typeof window !== "undefined" && window !== null) {
     moduleLoaded = import('/plugins/graphviz/graphviz-viewer.js');
     window.plugins.graphviz = {emit, bind};
+    if (typeof window.graphvizListener !== "undefined" || window.graphvizListener == null) {
+      console.log('**** Adding graphviz listener')
+      window.graphvizListener = graphvizListener
+      window.addEventListener("message", graphvizListener)
+    }
   }
 
   if (typeof module !== "undefined" && module !== null) {

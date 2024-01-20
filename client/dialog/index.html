@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graphviz</title>
+    <link id="favicon" href="/favicon.png" rel="icon" type="image/png" />
+    <link href="/dialog/style.css" rel="stylesheet" />
+    <script>
+      function click(event) {
+        event.stopPropagation()
+        event.preventDefault()
+
+        const keepLineup = event.shiftKey
+        document.getSelection().removeAllRanges()
+
+        const node = event.target.closest('.node')
+        const edge = event.target.closest('.edge')
+        if (node||edge) {
+          const title = Array.from(
+            (node||edge).querySelectorAll("text")
+          ).map(el => el.textContent.trim()).join(" ")
+          //let $page = event.shiftKey ? null : $item.parents('.page')
+          if (title) {
+            console.log('click', title)
+            window.opener.postMessage({ action: 'doInternalLink', keepLineup, pageKey: window.pageKey, title })
+            // set context for doInternalLink
+            //wiki.pageHandler.context = wiki.lineup.atKey($page.data('key')).getContext()
+            //wiki.doInternalLink(title, $page)
+          }
+        }
+      }
+
+      window.addEventListener(
+        "message",
+        (event) => {
+          const { svg, pageKey } = event.data
+          console.log('data', event.data)
+          window.pageKey = pageKey
+          //document.title = data.title
+          document.querySelector('.page').innerHTML = svg
+          document.querySelector('svg').addEventListener('click', click)
+        }
+      )
+
+
+
+    </script>
+  </head>
+  <body>
+    <div class="page">
+    </div>
+  </body>
+</html>
