@@ -508,6 +508,11 @@ ${item.dot??''}`
     const { data } = event
     const { action, keepLineup=false, pageKey=null, title=null } = data;
 
+    // only continue if event is from a graphviz popup.
+    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+      return
+    }
+
     let $page = null
     if (pageKey != null) {
       $page = keepLineup ? null : $('.page').filter((i, el) => $(el).data('key') == pageKey)
