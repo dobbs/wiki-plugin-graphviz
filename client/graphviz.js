@@ -505,13 +505,17 @@ ${item.dot??''}`
   };
 
   function graphvizListener(event) {
-    const { data } = event
-    const { action, keepLineup=false, pageKey=null, title=null } = data;
-
     // only continue if event is from a graphviz popup.
+    // events from a popup window will have an opener
+    // ensure that the popup window is one of ours
     if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+      if (wiki.debug) {console.log('graphvizListener - not for us', {event})}
       return
     }
+    if (wiki.debug) {console.log('graphvizListener - ours', {event})}
+
+    const { data } = event
+    const { action, keepLineup=false, pageKey=null, title=null } = data;
 
     let $page = null
     if (pageKey != null) {
