@@ -5,6 +5,12 @@
     <link id="favicon" href="/favicon.png" rel="icon" type="image/png" />
     <link href="/plugins/graphviz/dialog/style.css" rel="stylesheet" />
     <script>
+      var graph;
+
+      let zoomLvl = 1
+      let xOffset = 0
+      let yOffset = 0
+
       function click(event) {
         event.stopPropagation()
         event.preventDefault()
@@ -29,6 +35,57 @@
         }
       }
 
+      function pan(event) {
+        event.preventDefault()
+        const dx = event.movementX
+        const dy = event.movementY
+
+        xOffset += dx;
+        yOffset += dy;
+
+        graph.setAttribute('transform', `translate(${xOffset}, ${yOffset}) scale(${zoomLvl})`);
+      }
+
+      function zoom(event) {
+        event.preventDefault()
+        const deltaY = event.deltaY || event.wheelDeltaY; // Check for different properties for compatibility
+        // is this the right way around?
+        if (deltaY < 0) {
+          zoomLvl *= 1.01;
+        } else {
+          zoomLvl *= 0.99;
+        }
+
+        graph.setAttribute('transform', `translate(${xOffset}, ${yOffset}) scale(${zoomLvl})`);
+      }
+
+      function pointerLeaves(event) {
+        event.preventDefault()
+        console.log('pointer has left the room')
+        // this will turn off the pan as soon as the pointer leaves the svg
+        // do we need to track when it comes back, in case the pointer is still pressed?
+        graph.removeEventListener('pointermove', pan)
+        graph.removeEventListener('pointerleave', pointerLeaves)
+        graph.removeEventListener('pointerup', pointerUp)
+        // Maybe not, needs work!
+        //svg.addEventListener('pointerover', pointerEnters)
+      }
+
+      function pointerEnters(event) {
+        // currently not used, it just gets strange.
+        console.log('we are back!')
+        event.preventDefault()
+        graph.addEventListener('pointermove', pan);
+        graph.addEventListener('pointerleave', pointerLeaves)
+      }
+
+      function pointerUp(event) {
+        event.preventDefault()
+        graph.removeEventListener('pointermove', pan);
+        graph.removeEventListener('pointerleave', pointerLeaves)
+        graph.removeEventListener('pointerup', pointerUp)
+      }
+
       window.addEventListener(
         "message",
         (event) => {
@@ -37,7 +94,24 @@
           window.pageKey = pageKey
           //document.title = data.title
           document.querySelector('.page').innerHTML = svg
-          document.querySelector('svg').addEventListener('click', click)
+
+          graph = document.querySelector('svg');
+          // reset state.
+          zoomLvl = 1
+          xOffset = 0
+          yOffset = 0
+          
+          graph.addEventListener('click', click)
+
+          graph.addEventListener('pointerdown', (event) => {
+            event.preventDefault(); // Prevent default drag behavior
+            graph.addEventListener('pointermove', pan);
+            graph.addEventListener('pointerleave', pointerLeaves);
+            graph.addEventListener('pointerup', pointerUp);
+          })
+
+          graph.addEventListener('wheel', zoom);
+
         }
       )
 
