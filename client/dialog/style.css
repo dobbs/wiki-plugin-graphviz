@@ -20,4 +20,9 @@ body {
 svg {
   width: 100%;
   height: 100%;
+  cursor: move;
+}
+
+.node {
+  cursor: pointer;
 }

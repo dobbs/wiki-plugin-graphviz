@@ -5,11 +5,11 @@
     <link id="favicon" href="/favicon.png" rel="icon" type="image/png" />
     <link href="/plugins/graphviz/dialog/style.css" rel="stylesheet" />
     <script>
-      var graph;
+      var svgCanvas, viewPort;
 
-      let zoomLvl = 1
-      let xOffset = 0
-      let yOffset = 0
+      var drag = false
+      var offset = { x: 0, y: 0 }
+      var factor = 0.01
 
       function click(event) {
         event.stopPropagation()
@@ -35,57 +35,6 @@
         }
       }
 
-      function pan(event) {
-        event.preventDefault()
-        const dx = event.movementX
-        const dy = event.movementY
-
-        xOffset += dx;
-        yOffset += dy;
-
-        graph.setAttribute('transform', `translate(${xOffset}, ${yOffset}) scale(${zoomLvl})`);
-      }
-
-      function zoom(event) {
-        event.preventDefault()
-        const deltaY = event.deltaY || event.wheelDeltaY; // Check for different properties for compatibility
-        // is this the right way around?
-        if (deltaY < 0) {
-          zoomLvl *= 1.01;
-        } else {
-          zoomLvl *= 0.99;
-        }
-
-        graph.setAttribute('transform', `translate(${xOffset}, ${yOffset}) scale(${zoomLvl})`);
-      }
-
-      function pointerLeaves(event) {
-        event.preventDefault()
-        console.log('pointer has left the room')
-        // this will turn off the pan as soon as the pointer leaves the svg
-        // do we need to track when it comes back, in case the pointer is still pressed?
-        graph.removeEventListener('pointermove', pan)
-        graph.removeEventListener('pointerleave', pointerLeaves)
-        graph.removeEventListener('pointerup', pointerUp)
-        // Maybe not, needs work!
-        //svg.addEventListener('pointerover', pointerEnters)
-      }
-
-      function pointerEnters(event) {
-        // currently not used, it just gets strange.
-        console.log('we are back!')
-        event.preventDefault()
-        graph.addEventListener('pointermove', pan);
-        graph.addEventListener('pointerleave', pointerLeaves)
-      }
-
-      function pointerUp(event) {
-        event.preventDefault()
-        graph.removeEventListener('pointermove', pan);
-        graph.removeEventListener('pointerleave', pointerLeaves)
-        graph.removeEventListener('pointerup', pointerUp)
-      }
-
       window.addEventListener(
         "message",
         (event) => {
@@ -95,27 +44,65 @@
           //document.title = data.title
           document.querySelector('.page').innerHTML = svg
 
-          graph = document.querySelector('svg');
-          // reset state.
-          zoomLvl = 1
-          xOffset = 0
-          yOffset = 0
-          
-          graph.addEventListener('click', click)
+          svgCanvas = document.querySelector('svg');
+          viewPort = document.querySelector('g')
+                    
+          svgCanvas.addEventListener('click', click)
 
-          graph.addEventListener('pointerdown', (event) => {
-            event.preventDefault(); // Prevent default drag behavior
-            graph.addEventListener('pointermove', pan);
-            graph.addEventListener('pointerleave', pointerLeaves);
-            graph.addEventListener('pointerup', pointerUp);
-          })
+          var drag = false;
+          var offset = { x: 0, y: 0 };
+          var factor = .01;
 
-          graph.addEventListener('wheel', zoom);
+          let matrix = viewPort.transform.baseVal.consolidate().matrix
 
+          svgCanvas.addEventListener('pointerdown', function (event) {
+              drag = true;
+              offset = { x: event.offsetX, y: event.offsetY };
+          });
+
+          svgCanvas.addEventListener('pointermove', function (event) {
+              if (drag) {
+                  var tx = event.offsetX - offset.x;
+                  var ty = event.offsetY - offset.y;
+                  offset = {
+                      x: event.offsetX,
+                      y: event.offsetY
+                  };
+                  matrix = matrix.translate(tx, ty);
+                  var transform = svgCanvas.createSVGTransform()
+                  transform.setMatrix(matrix)
+                  viewPort.transform.baseVal.initialize(transform)
+              }
+          });
+
+          svgCanvas.addEventListener('pointerup', function (event) {
+              drag = false;
+          });
+
+          svgCanvas.addEventListener('wheel', function (event) {
+
+              const convertCoords = (x, y) => {
+                var pt = svgCanvas.createSVGPoint()
+                pt.x = x
+                pt.y = y
+                pt = pt.matrixTransform(viewPort.getScreenCTM().inverse())
+                return { x: pt.x, y: pt.y }
+              } 
+
+              var zoom = event.deltaY > 0 ? -1 : 1;
+              var scale = 1 + factor * zoom;
+              offset = convertCoords( event.clientX, event.clientY )
+
+              matrix = matrix.translate(offset.x, offset.y)
+                  .scale(scale, scale)
+                  .translate(-offset.x, -offset.y)
+
+              var transform = svgCanvas.createSVGTransform()
+              transform.setMatrix(matrix)
+              viewPort.transform.baseVal.initialize(transform)
+          });
         }
       )
-
-
 
     </script>
   </head>
