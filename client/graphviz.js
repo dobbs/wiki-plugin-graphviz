@@ -67,7 +67,6 @@ ${item.dot??''}`
     }
     if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
-      if (wiki.debug) { console.log('root',root) }
       root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
@@ -79,7 +78,6 @@ ${item.dot??''}`
         want: here.story.slice()
       }
       var dot = await eval(root, context, [])
-      if (wiki.debug) { console.log('dot', dot) }
       return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
@@ -92,7 +90,6 @@ ${item.dot??''}`
         let command = m[2]
         if (spaces == indent) {
           here.push(command)
-          if (wiki.debug) { console.log('parse',command) }
           lines.shift()
         } else if (spaces > indent) {
           var more = []
@@ -145,7 +142,7 @@ ${item.dot??''}`
       } else {
         let slug = asSlug(context.name)
         let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
-        if (wiki.debug) { console.log('resolution', slug, sites) }
+
         for (let site of sites) {
           try {
             return {site, page: await probe(site,slug)}
@@ -212,8 +209,7 @@ ${item.dot??''}`
           deeper.push({tree:ir, context})
 
         } else if (ir.match(/^[A-Z]/)) {
-          if (wiki.debug) { console.log('eval',ir) }
-
+          
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
@@ -300,7 +296,6 @@ ${item.dot??''}`
                 dot.push(quote(context.name))
               } else
               if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
-                if (wiki.debug) { console.log("labeled node", m, m[1], quote(m[1])) }
                 let kind = context.graph.match(/digraph/) ? '->' : '--'
                 dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
@@ -367,7 +362,6 @@ ${item.dot??''}`
           } else trouble("can't do", ir)
 
         } else {
-          if (wiki.debug) { console.log('eval',ir.toString()) }
           dot.push(ir)
         }
       }
