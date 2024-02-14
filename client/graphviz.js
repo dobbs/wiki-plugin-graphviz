@@ -422,7 +422,7 @@ ${item.dot??''}`
       case "zoom":
         // wiki.dialog('Graphviz', item.svg)
         const pageKey = $item.parents('.page').data('key')
-        const graphvizDialog = window.open('/plugins/graphviz/dialog/#', 'graphviz', 'popup,height=600,width=800')
+        const graphvizDialog = window.open('/plugins/graphviz/dialog/#', event.shiftKey ? '_blank' : 'graphviz', 'popup,height=600,width=800')
         if (graphvizDialog.location.pathname !== '/plugins/graphviz/dialog/') {
           graphvizDialog.addEventListener('load', (event) => {
             graphvizDialog.postMessage({ svg: item.svg, pageKey }, window.origin)
