@@ -422,13 +422,14 @@ ${item.dot??''}`
       case "zoom":
         // wiki.dialog('Graphviz', item.svg)
         const pageKey = $item.parents('.page').data('key')
+        const context = wiki.lineup.atKey(pageKey).getContext()
         const graphvizDialog = window.open('/plugins/graphviz/dialog/#', event.shiftKey ? '_blank' : 'graphviz', 'popup,height=600,width=800')
         if (graphvizDialog.location.pathname !== '/plugins/graphviz/dialog/') {
           graphvizDialog.addEventListener('load', (event) => {
-            graphvizDialog.postMessage({ svg: item.svg, pageKey }, window.origin)
+            graphvizDialog.postMessage({ svg: item.svg, pageKey, context }, window.origin)
           })
         } else {
-          graphvizDialog.postMessage({ svg: item.svg, pageKey }, window.origin)
+          graphvizDialog.postMessage({ svg: item.svg, pageKey, context }, window.origin)
         }
         break
       }
@@ -509,7 +510,7 @@ ${item.dot??''}`
     if (wiki.debug) {console.log('graphvizListener - ours', {event})}
 
     const { data } = event
-    const { action, keepLineup=false, pageKey=null, title=null } = data;
+    const { action, keepLineup=false, pageKey=null, title=null, context=null } = data;
 
     let $page = null
     if (pageKey != null) {
@@ -518,7 +519,7 @@ ${item.dot??''}`
 
     switch (action) {
       case 'doInternalLink':
-        wiki.pageHandler.context = wiki.lineup.atKey(pageKey).getContext()
+        wiki.pageHandler.context = context
         wiki.doInternalLink(title, $page)
         break
       default:

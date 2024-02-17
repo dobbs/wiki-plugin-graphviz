@@ -27,10 +27,7 @@
           //let $page = event.shiftKey ? null : $item.parents('.page')
           if (title) {
             console.log('click', title)
-            window.opener.postMessage({ action: 'doInternalLink', keepLineup, pageKey: window.pageKey, title })
-            // set context for doInternalLink
-            //wiki.pageHandler.context = wiki.lineup.atKey($page.data('key')).getContext()
-            //wiki.doInternalLink(title, $page)
+            window.opener.postMessage({ action: 'doInternalLink', keepLineup, pageKey: window.pageKey, context: window.context, title })
           }
         }
       }
@@ -38,12 +35,13 @@
       window.addEventListener(
         "message",
         (event) => {
-          const { svg, pageKey } = event.data
+          const { svg, pageKey, context } = event.data
           if (!svg) {
             return; // ignore unexpected messages
           }
           console.log('data', event.data)
           window.pageKey = pageKey
+          window.context = context
           //document.title = data.title
           document.querySelector('.page').innerHTML = svg
 
