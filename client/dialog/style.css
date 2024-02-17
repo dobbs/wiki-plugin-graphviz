@@ -23,6 +23,6 @@ svg {
   cursor: move;
 }
 
-.node {
+.node, .edge {
   cursor: pointer;
 }

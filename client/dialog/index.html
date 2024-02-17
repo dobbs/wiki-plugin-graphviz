@@ -39,6 +39,9 @@
         "message",
         (event) => {
           const { svg, pageKey } = event.data
+          if (!svg) {
+            return; // ignore unexpected messages
+          }
           console.log('data', event.data)
           window.pageKey = pageKey
           //document.title = data.title
