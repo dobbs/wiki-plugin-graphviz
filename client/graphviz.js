@@ -386,6 +386,17 @@ ${item.dot??''}`
 
 
   function emit($item, item) {
+    if (!([...document.styleSheets].filter((e) => e.ownerNode.hasAttribute('href')).length && 
+          [...document.styleSheets].filter((e) => e.href.endsWith('/plugins/graphviz/graphviz.css')).length)) {
+      console.log('adding style')
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = '/plugins/graphviz/graphviz.css'
+      link.type = 'text/css'
+      document.getElementsByTagName('head')[0].appendChild(link)
+    } else {
+      console.log('already have style')
+    }
     return $item.append(message('loading diagram'))
   };
 
@@ -437,31 +448,6 @@ ${item.dot??''}`
 
     try {
       let dot = await makedot($item, cleanBeforeMakedot(item))
-      $item.prepend(`
-<style>
-.graphviz {position: relative;}
-.graphviz:hover .actions {
-  position: absolute; top: 0; right: 0;
-  padding: 5px; background: white; box-shadow: 2px 2px 6px #999;
-  display: flex; flex-direction: row; place-content: flex-end;
-  border-radius: 5px;
-}
-.graphviz .actions {display: none;}
-.graphviz .actions a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  background: #fff;
-  border: 0;
-  border-radius: 2px;
-}
-.graphviz .actions a:hover {
-  background: #eee;
-}
-</style>
-`)
       $item.find('.viewer').html(`
 <nav class="actions">
 <a href="#" data-action="download" title="Download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="grey"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>

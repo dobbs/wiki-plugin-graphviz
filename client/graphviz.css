@@ -1,0 +1,21 @@
+.graphviz {position: relative;}
+.graphviz:hover .actions {
+  position: absolute; top: 0; right: 0;
+  padding: 5px; background: white; box-shadow: 2px 2px 6px #999;
+  display: flex; flex-direction: row; place-content: flex-end;
+  border-radius: 5px;
+}
+.graphviz .actions {display: none;}
+.graphviz .actions a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border: 0;
+  border-radius: 2px;
+}
+.graphviz .actions a:hover {
+  background: #eee;
+}
