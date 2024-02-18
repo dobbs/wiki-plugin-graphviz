@@ -386,8 +386,8 @@ ${item.dot??''}`
 
 
   function emit($item, item) {
-    if (!([...document.styleSheets].filter((e) => e.ownerNode.hasAttribute('href')).length && 
-          [...document.styleSheets].filter((e) => e.href.endsWith('/plugins/graphviz/graphviz.css')).length)) {
+    if (!([...document.styleSheets].filter((e) => e.ownerNode.hasAttribute('href'))
+                                   .filter((e) => e.href.endsWith('/plugins/graphviz/graphviz.css')).length)) {
       console.log('adding style')
       const link = document.createElement('link')
       link.rel = 'stylesheet'
