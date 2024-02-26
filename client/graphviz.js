@@ -67,7 +67,6 @@ ${item.dot??''}`
     }
     if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
       var root = tree(text.split(/\r?\n/), [], 0)
-      console.log('root',root)
       root.shift()
       var $page = $item.parents('.page')
       var here = $page.data('data')
@@ -79,7 +78,6 @@ ${item.dot??''}`
         want: here.story.slice()
       }
       var dot = await eval(root, context, [])
-      console.log('dot', dot)
       return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
@@ -92,7 +90,6 @@ ${item.dot??''}`
         let command = m[2]
         if (spaces == indent) {
           here.push(command)
-          console.log('parse',command)
           lines.shift()
         } else if (spaces > indent) {
           var more = []
@@ -145,7 +142,7 @@ ${item.dot??''}`
       } else {
         let slug = asSlug(context.name)
         let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
-        console.log('resolution', slug, sites)
+
         for (let site of sites) {
           try {
             return {site, page: await probe(site,slug)}
@@ -212,8 +209,7 @@ ${item.dot??''}`
           deeper.push({tree:ir, context})
 
         } else if (ir.match(/^[A-Z]/)) {
-          console.log('eval',ir)
-
+          
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
@@ -300,7 +296,6 @@ ${item.dot??''}`
                 dot.push(quote(context.name))
               } else
               if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
-                console.log("labeled node", m, m[1], quote(m[1]))
                 let kind = context.graph.match(/digraph/) ? '->' : '--'
                 dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
               } else
@@ -367,7 +362,6 @@ ${item.dot??''}`
           } else trouble("can't do", ir)
 
         } else {
-          console.log('eval',ir.toString())
           dot.push(ir)
         }
       }
@@ -392,6 +386,17 @@ ${item.dot??''}`
 
 
   function emit($item, item) {
+    if (!([...document.styleSheets].filter((e) => e.ownerNode.hasAttribute('href'))
+                                   .filter((e) => e.href.endsWith('/plugins/graphviz/graphviz.css')).length)) {
+      console.log('adding style')
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = '/plugins/graphviz/graphviz.css'
+      link.type = 'text/css'
+      document.getElementsByTagName('head')[0].appendChild(link)
+    } else {
+      console.log('already have style')
+    }
     return $item.append(message('loading diagram'))
   };
 
@@ -426,38 +431,23 @@ ${item.dot??''}`
         download(`${slug}.svg`, item.svg)
         break
       case "zoom":
-        wiki.dialog('Graphviz', item.svg)
+        // wiki.dialog('Graphviz', item.svg)
+        const pageKey = $item.parents('.page').data('key')
+        const context = wiki.lineup.atKey(pageKey).getContext()
+        const graphvizDialog = window.open('/plugins/graphviz/dialog/#', event.shiftKey ? '_blank' : 'graphviz', 'popup,height=600,width=800')
+        if (graphvizDialog.location.pathname !== '/plugins/graphviz/dialog/') {
+          graphvizDialog.addEventListener('load', (event) => {
+            graphvizDialog.postMessage({ svg: item.svg, pageKey, context }, window.origin)
+          })
+        } else {
+          graphvizDialog.postMessage({ svg: item.svg, pageKey, context }, window.origin)
+        }
         break
       }
     })
 
     try {
       let dot = await makedot($item, cleanBeforeMakedot(item))
-      $item.prepend(`
-<style>
-.graphviz {position: relative;}
-.graphviz:hover .actions {
-  position: absolute; top: 0; right: 0;
-  padding: 5px; background: white; box-shadow: 2px 2px 6px #999;
-  display: flex; flex-direction: row; place-content: flex-end;
-  border-radius: 5px;
-}
-.graphviz .actions {display: none;}
-.graphviz .actions a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  background: #fff;
-  border: 0;
-  border-radius: 2px;
-}
-.graphviz .actions a:hover {
-  background: #eee;
-}
-</style>
-`)
       $item.find('.viewer').html(`
 <nav class="actions">
 <a href="#" data-action="download" title="Download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="grey"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
@@ -495,9 +485,42 @@ ${item.dot??''}`
     }
   };
 
+  function graphvizListener(event) {
+    // only continue if event is from a graphviz popup.
+    // events from a popup window will have an opener
+    // ensure that the popup window is one of ours
+    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+      if (wiki.debug) {console.log('graphvizListener - not for us', {event})}
+      return
+    }
+    if (wiki.debug) {console.log('graphvizListener - ours', {event})}
+
+    const { data } = event
+    const { action, keepLineup=false, pageKey=null, title=null, context=null } = data;
+
+    let $page = null
+    if (pageKey != null) {
+      $page = keepLineup ? null : $('.page').filter((i, el) => $(el).data('key') == pageKey)
+    }
+
+    switch (action) {
+      case 'doInternalLink':
+        wiki.pageHandler.context = context
+        wiki.doInternalLink(title, $page)
+        break
+      default:
+        console.error({ where:'graphvizListener', message: "unknown action", data })
+    }
+  }
+
   if (typeof window !== "undefined" && window !== null) {
     moduleLoaded = import('/plugins/graphviz/graphviz-viewer.js');
     window.plugins.graphviz = {emit, bind};
+    if (typeof window.graphvizListener !== "undefined" || window.graphvizListener == null) {
+      console.log('**** Adding graphviz listener')
+      window.graphvizListener = graphvizListener
+      window.addEventListener("message", graphvizListener)
+    }
   }
 
   if (typeof module !== "undefined" && module !== null) {

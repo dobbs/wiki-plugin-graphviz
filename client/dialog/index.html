@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Graphviz</title>
+    <link id="favicon" href="/favicon.png" rel="icon" type="image/png" />
+    <link href="/plugins/graphviz/dialog/style.css" rel="stylesheet" />
+    <script>
+      var svgCanvas, viewPort;
+
+      var drag = false
+      var offset = { x: 0, y: 0 }
+      var factor = 0.01
+
+      function click(event) {
+        event.stopPropagation()
+        event.preventDefault()
+
+        const keepLineup = event.shiftKey
+        document.getSelection().removeAllRanges()
+
+        const node = event.target.closest('.node')
+        const edge = event.target.closest('.edge')
+        if (node||edge) {
+          const title = Array.from(
+            (node||edge).querySelectorAll("text")
+          ).map(el => el.textContent.trim()).join(" ")
+          //let $page = event.shiftKey ? null : $item.parents('.page')
+          if (title) {
+            console.log('click', title)
+            window.opener.postMessage({ action: 'doInternalLink', keepLineup, pageKey: window.pageKey, context: window.context, title })
+          }
+        }
+      }
+
+      window.addEventListener(
+        "message",
+        (event) => {
+          const { svg, pageKey, context } = event.data
+          if (!svg) {
+            return; // ignore unexpected messages
+          }
+          console.log('data', event.data)
+          window.pageKey = pageKey
+          window.context = context
+          //document.title = data.title
+          document.querySelector('.page').innerHTML = svg
+
+          svgCanvas = document.querySelector('svg');
+          viewPort = document.querySelector('g')
+                    
+          svgCanvas.addEventListener('click', click)
+
+          var drag = false;
+          var offset = { x: 0, y: 0 };
+          var factor = .01;
+
+          let matrix = viewPort.transform.baseVal.consolidate().matrix
+
+          svgCanvas.addEventListener('pointerdown', function (event) {
+              drag = true;
+              offset = { x: event.offsetX, y: event.offsetY };
+          });
+
+          svgCanvas.addEventListener('pointermove', function (event) {
+              if (drag) {
+                  var tx = event.offsetX - offset.x;
+                  var ty = event.offsetY - offset.y;
+                  offset = {
+                      x: event.offsetX,
+                      y: event.offsetY
+                  };
+                  matrix = matrix.translate(tx, ty);
+                  var transform = svgCanvas.createSVGTransform()
+                  transform.setMatrix(matrix)
+                  viewPort.transform.baseVal.initialize(transform)
+              }
+          });
+
+          svgCanvas.addEventListener('pointerup', function (event) {
+              drag = false;
+          });
+
+          svgCanvas.addEventListener('wheel', function (event) {
+
+              const convertCoords = (x, y) => {
+                var pt = svgCanvas.createSVGPoint()
+                pt.x = x
+                pt.y = y
+                pt = pt.matrixTransform(viewPort.getScreenCTM().inverse())
+                return { x: pt.x, y: pt.y }
+              } 
+
+              var zoom = event.deltaY > 0 ? -1 : 1;
+              var scale = 1 + factor * zoom;
+              offset = convertCoords( event.clientX, event.clientY )
+
+              matrix = matrix.translate(offset.x, offset.y)
+                  .scale(scale, scale)
+                  .translate(-offset.x, -offset.y)
+
+              var transform = svgCanvas.createSVGTransform()
+              transform.setMatrix(matrix)
+              viewPort.transform.baseVal.initialize(transform)
+          });
+        }
+      )
+
+    </script>
+  </head>
+  <body>
+    <div class="page">
+    </div>
+  </body>
+</html>
