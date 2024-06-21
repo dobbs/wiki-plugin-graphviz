@@ -77,7 +77,7 @@ ${item.dot??''}`
         page: here,
         want: here.story.slice()
       }
-      var dot = await eval(root, context, [])
+      var dot = await evalTree(root, context, [])
       return `${context.graph} {${dot.join("\n")}}`
     } else {
       return text
@@ -197,7 +197,7 @@ ${item.dot??''}`
       return graph;
     }
 
-    async function eval(tree, context, dot) {
+    async function evalTree(tree, context, dot) {
       let deeper = []
       var pc = 0
       while (pc < tree.length) {
@@ -368,7 +368,7 @@ ${item.dot??''}`
 
       for (var i=0; i<deeper.length; i++) {
         let child = deeper[i]
-        await eval(child.tree, child.context, dot)
+        await evalTree(child.tree, child.context, dot)
       }
 
       return dot
