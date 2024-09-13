@@ -1,6 +1,6 @@
 "use strict"
 
-import {Graphviz} from './hpcc/graphviz.js'
+import { Graphviz } from '@hpcc-js/wasm/graphviz'
 const graphviz = await Graphviz.load()
 
 const template = document.createElement('template')
@@ -49,7 +49,8 @@ class GraphvizViewer extends HTMLElement {
   async connectedCallback() {
     if (super.connectedCallback)
       super.connectedCallback()
-    await this.render()
+    // let's not call render here, as we call it elsewhere!
+    // await this.render()
   }
 
   _replaceShadowRoot(el) {
