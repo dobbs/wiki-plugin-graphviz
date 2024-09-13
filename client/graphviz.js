@@ -209,7 +209,7 @@ ${item.dot??''}`
           deeper.push({tree:ir, context})
 
         } else if (ir.match(/^[A-Z]/)) {
-          
+
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
@@ -489,7 +489,7 @@ ${item.dot??''}`
     // only continue if event is from a graphviz popup.
     // events from a popup window will have an opener
     // ensure that the popup window is one of ours
-    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') {
       if (wiki.debug) {console.log('graphvizListener - not for us', {event})}
       return
     }
