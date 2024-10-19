@@ -46,82 +46,29 @@ ${item.dot??''}`
     return {...item, text};
   }
 
-  async function makedot($item, item) {
-    const {asSlug} = wiki;
-    let text = item.text;
-    let m;
-    if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
-      let site = $item.parents('.page').data('site')||location.host
-      let slug = m[1]
-      let page = $item.parents('.page').data('data')
-      let poly = await polyget({name: slug, site, page})
-      if (page = poly.page) {
-        let redirect = page.story.find(each => each.type == 'graphviz')
-        if (redirect) {
-          text = redirect.text
-        }
-      }
-      if (text == item.text) {
-        return trouble("can't do", item.text)
-      }
-    }
-    if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
-      var root = tree(text.split(/\r?\n/), [], 0)
-      root.shift()
-      var $page = $item.parents('.page')
-      var here = $page.data('data')
-      var context = {
-        graph: m[1],
-        name: here.title,
-        site: $page.data('site')||location.host,
-        page: here,
-        want: here.story.slice()
-      }
-      var dot = await evalTree(root, context, [])
-      return `${context.graph} {${dot.join("\n")}}`
-    } else {
-      return text
-    }
+  // A L G O R I T H M I C   D R A W I N G
 
-    function tree(lines, here, indent) {
-      while (lines.length) {
-        let m = lines[0].match(/( *)(.*)/)
-        let spaces = m[1].length
-        let command = m[2]
-        if (spaces == indent) {
-          here.push(command)
-          lines.shift()
-        } else if (spaces > indent) {
-          var more = []
-          here.push(more)
-          tree(lines, more, spaces)
-        } else {
-          return here
-        }
+  function tree(lines, here, indent) {
+    while (lines.length) {
+      let m = lines[0].match(/( *)(.*)/)
+      let spaces = m[1].length
+      let command = m[2]
+      if (spaces == indent) {
+        here.push(command)
+        lines.shift()
+      } else if (spaces > indent) {
+        var more = []
+        here.push(more)
+        tree(lines, more, spaces)
+      } else {
+        return here
       }
-      return here
     }
+    return here
+  }
 
-    function quote (string) {
-      const quoted = string.replace(/ +/g,'\n').replace(/"/g,'\\"')
-      return `"${quoted}"`
-    }
-
-    function trouble (text, detail) {
-      // console.log(text,detail)
-      throw new Error(text + "\n" + detail)
-    }
-
-    function collaborators (journal, implicit) {
-      // usage: collaborators(page.journal, [site, item.site, location.host])
-      let sites = journal
-        .filter(action=>action.site)
-        .map(action=>action.site)
-      sites.push(...implicit)
-      sites.reverse()
-      return sites
-        .filter((site,pos)=>sites.indexOf(site)==pos)
-    }
+  async function polyget (context) {
+    console.log('polyget',context)
 
     async function probe (site, slug) {
       if (site === 'local') {
@@ -136,22 +83,45 @@ ${item.dot??''}`
       }
     }
 
-    async function polyget (context) {
-      if (context.name == context.page.title) {
-        return {site: context.site, page: context.page}
-      } else {
-        let slug = asSlug(context.name)
-        let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
+    function collaborators (journal, implicit) {
+      // usage: collaborators(page.journal, [site, item.site, location.host])
+      let sites = journal
+        .filter(action=>action.site)
+        .map(action=>action.site)
+      sites.push(...implicit)
+      sites.reverse()
+      return sites
+        .filter((site,pos)=>sites.indexOf(site)==pos)
+    }
 
-        for (let site of sites) {
-          try {
-            return {site, page: await probe(site,slug)}
-          } catch (err) {
-            // 404 not found errors expected
-          }
+    if (context.name == context.page.title) {
+      return {site: context.site, page: context.page}
+    } else {
+      let slug = asSlug(context.name)
+      let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
+
+      for (let site of sites) {
+        try {
+          return {site, page: await probe(site,slug)}
+        } catch (err) {
+          // 404 not found errors expected
         }
-        return null
       }
+      return null
+    }
+  }
+
+
+  async function evalTree(tree, context, dot) {
+
+    function quote (string) {
+      const quoted = string.replace(/ +/g,'\n').replace(/"/g,'\\"')
+      return `"${quoted}"`
+    }
+
+    function trouble (text, detail) {
+      // console.log(text,detail)
+      throw new Error(text + "\n" + detail)
     }
 
     function graphData(here, text) {
@@ -197,183 +167,227 @@ ${item.dot??''}`
       return graph;
     }
 
-    async function evalTree(tree, context, dot) {
-      let deeper = []
-      var pc = 0
-      while (pc < tree.length) {
-        let ir = tree[pc++]
-        const nest = () => (pc < tree.length && Array.isArray(tree[pc])) ? tree[pc++] : []
-        const peek = (keyword) => pc < tree.length && tree[pc]==keyword && pc++
+    let deeper = []
+    var pc = 0
+    while (pc < tree.length) {
+      let ir = tree[pc++]
+      let m
+      const nest = () => (pc < tree.length && Array.isArray(tree[pc])) ? tree[pc++] : []
+      const peek = (keyword) => pc < tree.length && tree[pc]==keyword && pc++
 
-        if (Array.isArray(ir)) {
-          deeper.push({tree:ir, context})
+      if (Array.isArray(ir)) {
+        deeper.push({tree:ir, context})
 
-        } else if (ir.match(/^[A-Z]/)) {
-          
-          if (ir.match(/^LINKS/)) {
-            let text = context.want.map(p=>p.text).join("\n")
-            let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
+      } else if (ir.match(/^[A-Z]/)) {
+
+        if (ir.match(/^LINKS/)) {
+          let text = context.want.map(p=>p.text).join("\n")
+          let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
+          let tree = nest()
+          links.map((link) => {
+            if (m = ir.match(/^LINKS HERE (->|--) NODE/)) {
+              dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
+            } else
+            if (m = ir.match(/^LINKS NODE (->|--) HERE/)) {
+              dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+            } else
+            if (!ir.match(/^LINKS$/)) {
+              trouble("can't do link", ir)
+            }
+            if (tree.length) {
+              let new_context = Object.assign({},context,{name:link})
+              new_context.promise = polyget(new_context)
+              deeper.push({tree, context:new_context})
+          }
+          })
+        } else
+
+        if (ir.match(/^BACKLINKS/)) {
+          if (! wiki.neighborhoodObject.backLinks) {
+            console.error("graphviz plugin skipping backlinks because wiki-client is missing backlinks", ir)
+          } else {
+            let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
+            let links = Object.values(backlinks).map(bl => bl.title)
             let tree = nest()
             links.map((link) => {
-              if (m = ir.match(/^LINKS HERE (->|--) NODE/)) {
+              if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {
                 dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
               } else
-              if (m = ir.match(/^LINKS NODE (->|--) HERE/)) {
-                dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
-              } else
-              if (!ir.match(/^LINKS$/)) {
-                trouble("can't do link", ir)
-              }
+                if (m = ir.match(/^BACKLINKS NODE (->|--) HERE/)) {
+                  dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
+                } else
+                  if (!ir.match(/^BACKLINKS$/)) {
+                    trouble("can't do backlink", ir)
+                  }
               if (tree.length) {
                 let new_context = Object.assign({},context,{name:link})
                 new_context.promise = polyget(new_context)
                 deeper.push({tree, context:new_context})
-            }
+              }
             })
-          } else
+          }
+        } else
 
-          if (ir.match(/^BACKLINKS/)) {
-            if (! wiki.neighborhoodObject.backLinks) {
-              console.error("graphviz plugin skipping backlinks because wiki-client is missing backlinks", ir)
+        if (ir.match(/^GRAPH$/)) {
+          for (let item of context.want) {
+            if (item.type == 'graph') {
+              let graph = graphData(context.name, item.text)
+              let kind = context.graph.match(/digraph/) ? '->' : '--'
+              for (let here in graph) {
+                dot.push(`${quote(here)}`)
+                for (let there of graph[here]) {
+                  dot.push(`${quote(here)} ${kind} ${quote(there)}`)
+                }
+              }
+            }
+          }
+        } else
+
+        if (ir.match(/^HERE/)) {
+          let tree = nest()
+          let page = null
+          let site = ''
+          try {
+            if(context.promise) {
+              let poly = await context.promise
+              site = poly.site
+              page = poly.page
+              delete context.promise
             } else {
-              let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
-              let links = Object.values(backlinks).map(bl => bl.title)
-              let tree = nest()
-              links.map((link) => {
-                if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {
-                  dot.push(`${quote(context.name)} ${m[1]} ${quote(link)}`)
-                } else
-                  if (m = ir.match(/^BACKLINKS NODE (->|--) HERE/)) {
-                    dot.push(`${quote(link)} ${m[1]} ${quote(context.name)}`)
-                  } else
-                    if (!ir.match(/^BACKLINKS$/)) {
-                      trouble("can't do backlink", ir)
-                    }
-                if (tree.length) {
-                  let new_context = Object.assign({},context,{name:link})
-                  new_context.promise = polyget(new_context)
-                  deeper.push({tree, context:new_context})
-                }
-              })
+              let poly = await polyget(context)
+              site = poly.site
+              page = poly.page
             }
-          } else
+          } catch (err) {}
 
-          if (ir.match(/^GRAPH$/)) {
-            for (let item of context.want) {
-              if (item.type == 'graph') {
-                let graph = graphData(context.name, item.text)
-                let kind = context.graph.match(/digraph/) ? '->' : '--'
-                for (let here in graph) {
-                  dot.push(`${quote(here)}`)
-                  for (let there of graph[here]) {
-                    dot.push(`${quote(here)} ${kind} ${quote(there)}`)
-                  }
-                }
-              }
-            }
-          } else
-
-          if (ir.match(/^HERE/)) {
-            let tree = nest()
-            let page = null
-            let site = ''
-            try {
-              if(context.promise) {
-                let poly = await context.promise
-                site = poly.site
-                page = poly.page
-                delete context.promise
-              } else {
-                let poly = await polyget(context)
-                site = poly.site
-                page = poly.page
-              }
-            } catch (err) {}
-
-            let m
-            if (page) {
-              if (ir.match(/^HERE NODE$/)) {
-                dot.push(quote(context.name))
-              } else
-              if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
-                let kind = context.graph.match(/digraph/) ? '->' : '--'
-                dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
-              } else
-              if (!ir.match(/^HERE$/)) {
-                trouble("can't do here", ir)
-              }
-              deeper.push({tree, context:Object.assign({},context,{site, page, want:page.story})})
-            }
-            if (peek('ELSE')) {
-              let tree = nest()
-              if (!page) {
-                deeper.push({tree, context})
-              }
-            }
-          } else
-
-          if (ir.match(/^WHERE/)) {
-            let tree = nest()
-            var want = context.want
-            if (m = ir.match(/\/.*?\//)) {
-              let regex = new RegExp(m[0].slice(1,-1))
-              want = want.filter(item => (item.text||'').match(regex))
-            } else if (m = ir.match(/ FOLD ([a-z_-]+)/)) {
-              var within = false
-              want = want.filter((item) => {
-                if (item.type == 'pagefold') {
-                  within = item.text == m[1]
-                }
-                return within
-              })
-            } else if (m = ir.match(/[a-z_]+/)) {
-              let attr = m[0]
-              want = want.filter(item => item[attr])
-            } else trouble("can't do where", ir)
-            deeper.push({tree, context:Object.assign({},context,{want})})
-          } else
-
-          if (ir.match(/^FAKE/)) {
-            if (m = ir.match(/^FAKE HERE (->|--) NODE/)) {
-              dot.push(`${quote(context.name)} ${m[1]} ${quote('post-'+context.name)}`)
+          let m
+          if (page) {
+            if (ir.match(/^HERE NODE$/)) {
+              dot.push(quote(context.name))
             } else
-            if (m = ir.match(/^FAKE NODE (->|--) HERE/)) {
-              dot.push(`${quote('pre-'+context.name)} ${m[1]} ${quote(context.name)}`)
-            } else trouble("can't do fake", ir)
-          } else
-
-          if (ir.match(/^LINEUP$/)) {
-            let tree = nest()
-            try {
-              let $page = $item.parents('.page')
-              let $lineup = $(`.page:lt(${$('.page').index($page)})`)
-              $lineup.each((i,p) => {
-                let site = $(p).data('site')||location.host
-                let name = $(p).data('data').title
-                deeper.push({tree, context:Object.assign({},context,{site, name})})
-              })
-            } catch {
-              throw new Error("can't do LINEUP yet")
+            if (m = ir.match(/^HERE NODE "?([\w\s]+)/)) {
+              let kind = context.graph.match(/digraph/) ? '->' : '--'
+              dot.push(`${quote(m[1])} ${kind} ${quote(context.name)} [style=dotted]`)
+            } else
+            if (!ir.match(/^HERE$/)) {
+              trouble("can't do here", ir)
             }
+            deeper.push({tree, context:Object.assign({},context,{site, page, want:page.story})})
+          }
+          if (peek('ELSE')) {
+            let tree = nest()
+            if (!page) {
+              deeper.push({tree, context})
+            }
+          }
+        } else
+
+        if (ir.match(/^WHERE/)) {
+          let tree = nest()
+          var want = context.want
+          if (m = ir.match(/\/.*?\//)) {
+            let regex = new RegExp(m[0].slice(1,-1))
+            want = want.filter(item => (item.text||'').match(regex))
+          } else if (m = ir.match(/ FOLD ([a-z_-]+)/)) {
+            var within = false
+            want = want.filter((item) => {
+              if (item.type == 'pagefold') {
+                within = item.text == m[1]
+              }
+              return within
+            })
+          } else if (m = ir.match(/[a-z_]+/)) {
+            let attr = m[0]
+            want = want.filter(item => item[attr])
+          } else trouble("can't do where", ir)
+          deeper.push({tree, context:Object.assign({},context,{want})})
+        } else
+
+        if (ir.match(/^FAKE/)) {
+          if (m = ir.match(/^FAKE HERE (->|--) NODE/)) {
+            dot.push(`${quote(context.name)} ${m[1]} ${quote('post-'+context.name)}`)
           } else
+          if (m = ir.match(/^FAKE NODE (->|--) HERE/)) {
+            dot.push(`${quote('pre-'+context.name)} ${m[1]} ${quote(context.name)}`)
+          } else trouble("can't do fake", ir)
+        } else
 
-          if (ir.match(/^STATIC/)) {
-            break;
-          } else trouble("can't do", ir)
+        if (ir.match(/^LINEUP$/)) {
+          let tree = nest()
+          try {
+            let $page = $item.parents('.page')
+            let $lineup = $(`.page:lt(${$('.page').index($page)})`)
+            $lineup.each((i,p) => {
+              let site = $(p).data('site')||location.host
+              let name = $(p).data('data').title
+              deeper.push({tree, context:Object.assign({},context,{site, name})})
+            })
+          } catch {
+            throw new Error("can't do LINEUP yet")
+          }
+        } else
 
-        } else {
-          dot.push(ir)
+        if (ir.match(/^STATIC/)) {
+          break;
+        } else trouble("can't do", ir)
+
+      } else {
+        dot.push(ir)
+      }
+    }
+
+    for (var i=0; i<deeper.length; i++) {
+      let child = deeper[i]
+      await evalTree(child.tree, child.context, dot)
+    }
+
+    return dot
+  }
+
+
+
+ async function makedot($item, item) {
+    const {asSlug} = wiki;
+    let text = item.text;
+    let m;
+    if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {
+      let site = $item.parents('.page').data('site')||location.host
+      let slug = m[1]
+      let page = $item.parents('.page').data('data')
+      let poly = await polyget({name: slug, site, page})
+      if (page = poly.page) {
+        let redirect = page.story.find(each => each.type == 'graphviz')
+        if (redirect) {
+          text = redirect.text
         }
       }
-
-      for (var i=0; i<deeper.length; i++) {
-        let child = deeper[i]
-        await evalTree(child.tree, child.context, dot)
+      if (text == item.text) {
+        return trouble("can't do", item.text)
       }
-
-      return dot
+    }
+    if (m = text.match(/^DOT ((strict )?(di)?graph)\n/)) {
+      var root = tree(text.split(/\r?\n/), [], 0)
+      root.shift()
+      var $page = $item.parents('.page')
+      var here = $page.data('data')
+      var context = {
+        graph: m[1],
+        name: here.title,
+        site: $page.data('site')||location.host,
+        page: here,
+        want: here.story.slice()
+      }
+      console.log({root,context})
+      var dot = await evalTree(root, context, [])
+      console.log(dot)
+      return `${context.graph} {${dot.join("\n")}}`
+    } else {
+      return text
     }
   }
+
+
+
 
   function message (text) {
     return `
@@ -489,7 +503,7 @@ ${item.dot??''}`
     // only continue if event is from a graphviz popup.
     // events from a popup window will have an opener
     // ensure that the popup window is one of ours
-    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') {
       if (wiki.debug) {console.log('graphvizListener - not for us', {event})}
       return
     }
@@ -524,7 +538,7 @@ ${item.dot??''}`
   }
 
   if (typeof module !== "undefined" && module !== null) {
-    module.exports = {expand, includeStaticDotInText, cleanBeforeMakedot};
+    module.exports = {expand, includeStaticDotInText, cleanBeforeMakedot, tree, evalTree};
   }
 
 }).call(this);
