@@ -23,10 +23,21 @@
     });
 
     describe('evalTree', () => {
-      const page = {title:'This Page'}
+      const page = {title:'This Page',story:[],journal:[]}
+      var context = {
+        name: page.title,
+        site: 'localhost',
+        page,
+        want: page.story.slice()
+      }
       it('can pass dot markup', async () => {
-        const result = await graphviz.evalTree(['node [shape=box]'],page,[])
+        const result = await graphviz.evalTree(['node [shape=box]'],context,[])
         return expect(result[0]).to.be('node [shape=box]');
+      });
+
+      it('can display a node', async () => {
+        const result = await graphviz.evalTree(['HERE NODE'],context,[])
+        return expect(result[0]).to.be('"This\nPage"');
       });
 
     });

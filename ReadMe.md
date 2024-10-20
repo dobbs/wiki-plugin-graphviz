@@ -18,6 +18,16 @@ This plugin, type: graphviz, extends the markup of the federated wiki.
 
     # visit http://localhost:3000 to test the plugin revisions
 
+## Test development workflow
+
+    # install github code spaces utilities
+    npm i -g c8
+    npm i -g http-server
+
+    # run tests with coverage details
+    c8 -r 'lcov' npx mocha
+    (cd coverage/lcov-report/; http-server)
+
 ## Release workflow
 
     npm version patch
