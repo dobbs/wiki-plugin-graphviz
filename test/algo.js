@@ -23,7 +23,10 @@
     });
 
     describe('evalTree', () => {
-      const page = {title:'This Page',story:[],journal:[]}
+      const page = {
+        title:'This Page',
+        story:[{type:'Paragraph',text:'[[That Page]]'}],
+        journal:[]}
       var context = {
         name: page.title,
         site: 'localhost',
@@ -38,6 +41,11 @@
       it('can display a node', async () => {
         const result = await graphviz.evalTree(['HERE NODE'],context,[])
         return expect(result[0]).to.be('"This\nPage"');
+      });
+
+      it('can display linked nodes', async () => {
+        const result = await graphviz.evalTree(['HERE NODE',['LINKS HERE -> NODE']],context,[])
+        return expect(result[1]).to.be('"This\nPage" -> "That\nPage"');
       });
 
     });
