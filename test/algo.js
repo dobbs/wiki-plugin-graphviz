@@ -6,13 +6,17 @@
         expect = require('expect.js');
   const federation = {
     'fed.wiki': {
+      'this-page': {
+        title:'This Page',
+        story:[{type:'Paragraph',text:'[[That Page]]'}],
+        journal:[]},
       'that-page': {
         title: 'That Page',
         story: [{type:'paragraph',text:'Hello Word'}]
       }
     }
   }
-  const probe = (site,slug) => {
+  const probe = async (site,slug) => {
     console.log('probe',{site,slug})
     return federation[site][slug]
   }
@@ -34,15 +38,13 @@
       });
     });
 
-    describe('evalTree', () => {
-      const page = {
-        title:'This Page',
-        story:[{type:'Paragraph',text:'[[That Page]]'}],
-        journal:[]}
+    describe('evalTree', async () => {
+      const site = 'fed.wiki'
+      const page = await probe(site,'this-page')
       var context = {
         probe,
         name: page.title,
-        site: 'fed.wiki',
+        site,
         page,
         want: page.story.slice()
       }

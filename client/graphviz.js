@@ -118,7 +118,7 @@ ${item.dot??''}`
 
 
   async function evalTree(tree, context, dot) {
-    console.log({tree,context,dot})
+    console.log('eval',tree)
 
     function quote (string) {
       const quoted = string.replace(/ +/g,'\n').replace(/"/g,'\\"')
