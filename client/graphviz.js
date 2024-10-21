@@ -1,5 +1,6 @@
 (function() {
   let moduleLoaded;
+  const asSlug = (title) => title.replace(/\s/g, '-').replace(/[^A-Za-z0-9-]/g, '').toLowerCase()
 
   // https://github.com/hpcc-systems/hpcc-js-wasm
   // https://github.com/fedwiki/wiki/issues/63
@@ -68,7 +69,6 @@ ${item.dot??''}`
   }
 
   async function polyget (context) {
-    console.log('polyget',context)
 
     async function probe (site, slug) {
       if (site === 'local') {
@@ -98,11 +98,16 @@ ${item.dot??''}`
       return {site: context.site, page: context.page}
     } else {
       let slug = asSlug(context.name)
-      let sites = collaborators(context.page.journal, [context.site, location.host, 'local'])
+
+
+      let origin = 'localhost'
+      if (typeof location !== 'undefined') origin = location.host
+      let sites = collaborators(context.page.journal, [context.site, origin, 'local'])
 
       for (let site of sites) {
         try {
-          return {site, page: await probe(site,slug)}
+          const page = await (context.probe || probe)(site,slug)
+          return {site, page}
         } catch (err) {
           // 404 not found errors expected
         }
@@ -113,6 +118,7 @@ ${item.dot??''}`
 
 
   async function evalTree(tree, context, dot) {
+    console.log({tree,context,dot})
 
     function quote (string) {
       const quoted = string.replace(/ +/g,'\n').replace(/"/g,'\\"')
@@ -347,7 +353,6 @@ ${item.dot??''}`
 
 
  async function makedot($item, item) {
-    const {asSlug} = wiki;
     let text = item.text;
     let m;
     if (m = text.match(/^DOT FROM ([a-z0-9-]+)($|\n)/)) {

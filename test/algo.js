@@ -4,6 +4,18 @@
 (function() {
   const graphviz = require('../client/graphviz'),
         expect = require('expect.js');
+  const federation = {
+    'fed.wiki': {
+      'that-page': {
+        title: 'That Page',
+        story: [{type:'paragraph',text:'Hello Word'}]
+      }
+    }
+  }
+  const probe = (site,slug) => {
+    console.log('probe',{site,slug})
+    return federation[site][slug]
+  }
 
   describe('graphviz algorithmic drawing', () => {
 
@@ -28,8 +40,9 @@
         story:[{type:'Paragraph',text:'[[That Page]]'}],
         journal:[]}
       var context = {
+        probe,
         name: page.title,
-        site: 'localhost',
+        site: 'fed.wiki',
         page,
         want: page.story.slice()
       }
@@ -43,9 +56,14 @@
         return expect(result[0]).to.be('"This\nPage"');
       });
 
-      it('can display linked nodes', async () => {
+      it('can display linked to nodes', async () => {
         const result = await graphviz.evalTree(['HERE NODE',['LINKS HERE -> NODE']],context,[])
         return expect(result[1]).to.be('"This\nPage" -> "That\nPage"');
+      });
+
+      it('can display linkd nodes', async () => {
+        const result = await graphviz.evalTree(['HERE',['LINKS',['HERE NODE']]],context,[])
+        return expect(result[0]).to.be('"That\nPage"');
       });
 
     });
