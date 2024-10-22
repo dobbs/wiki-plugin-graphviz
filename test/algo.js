@@ -8,7 +8,10 @@
     'fed.wiki': {
       'this-page': {
         title:'This Page',
-        story:[{type:'Paragraph',text:'[[That Page]]'}],
+        story:[
+          {type:'paragraph',text:'[[That Page]]'},
+          {type:'graph',text:'World --> HERE'}
+        ],
         journal:[]},
       'that-page': {
         title: 'That Page',
@@ -56,6 +59,7 @@
         name: page.title,
         site,
         page,
+        graph:'digraph',
         want: page.story.slice()
       }
       it('can pass dot markup', async () => {
@@ -77,6 +81,10 @@
       it('can display backlinks to nodes', async () => {
         const result = await graphviz.evalTree(['HERE NODE',['BACKLINKS NODE -> HERE']],context,[])
         return expect(result[1]).to.be('"From\nPage" -> "This\nPage"');
+      });
+      it('can display links from Graph plugins', async () => {
+        const result = await graphviz.evalTree(['GRAPH'],context,[])
+        return expect(result[1]).to.be('"World" -> "This\nPage"');
       });
     });
   });
