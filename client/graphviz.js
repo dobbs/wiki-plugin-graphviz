@@ -209,11 +209,11 @@ ${item.dot??''}`
         } else
 
         if (ir.match(/^BACKLINKS/)) {
-          if (! wiki.neighborhoodObject.backLinks) {
+          const backlinks = context.backlinks ?? wiki.neighborhoodObject.backLinks
+          if (! backlinks) {
             console.error("graphviz plugin skipping backlinks because wiki-client is missing backlinks", ir)
           } else {
-            let backlinks = wiki.neighborhoodObject.backLinks(asSlug(context.name))
-            let links = Object.values(backlinks).map(bl => bl.title)
+            let links = Object.values(backlinks(asSlug(context.name))).map(bl => bl.title)
             let tree = nest()
             links.map((link) => {
               if (m = ir.match(/^BACKLINKS HERE (->|--) NODE/)) {

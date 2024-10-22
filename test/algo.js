@@ -20,6 +20,15 @@
     console.log('probe',{site,slug})
     return federation[site][slug]
   }
+  const backlinks = slug => {
+    console.log('backlinks',slug)
+    const pages = {
+      'this-page': {
+        'from-page': {'title': 'From Page','sites': []}
+      }
+    }
+    return pages[slug]
+  }
 
   describe('graphviz algorithmic drawing', () => {
 
@@ -43,6 +52,7 @@
       const page = await probe(site,'this-page')
       var context = {
         probe,
+        backlinks,
         name: page.title,
         site,
         page,
@@ -52,26 +62,23 @@
         const result = await graphviz.evalTree(['node [shape=box]'],context,[])
         return expect(result[0]).to.be('node [shape=box]');
       });
-
       it('can display a node', async () => {
         const result = await graphviz.evalTree(['HERE NODE'],context,[])
         return expect(result[0]).to.be('"This\nPage"');
       });
-
-      it('can display linked to nodes', async () => {
+      it('can display links to nodes', async () => {
         const result = await graphviz.evalTree(['HERE NODE',['LINKS HERE -> NODE']],context,[])
         return expect(result[1]).to.be('"This\nPage" -> "That\nPage"');
       });
-
-      it('can display linkd nodes', async () => {
+      it('can display linked nodes', async () => {
         const result = await graphviz.evalTree(['HERE',['LINKS',['HERE NODE']]],context,[])
         return expect(result[0]).to.be('"That\nPage"');
       });
-
+      it('can display backlinks to nodes', async () => {
+        const result = await graphviz.evalTree(['HERE NODE',['BACKLINKS NODE -> HERE']],context,[])
+        return expect(result[1]).to.be('"From\nPage" -> "This\nPage"');
+      });
     });
-
-
   });
-
 }).call(this);
 
