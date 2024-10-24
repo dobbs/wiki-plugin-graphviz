@@ -10,7 +10,12 @@
         title:'This Page',
         story:[
           {type:'paragraph',text:'[[That Page]]'},
-          {type:'graph',text:'World --> HERE'}
+          {type:'paragraph',text:'[[Missing Page]]'},
+          {type:'paragraph',text:'See also [[Special Page]]'},
+          {type:'graph',text:'World --> HERE'},
+          {type:'pagefold',text:'wanted'},
+          {type:'paragraph',text:'[[Want This]]'},
+          {type:'paragraph',text:'[[Want Marked]]',mark:true}
         ],
         journal:[]},
       'that-page': {
@@ -20,11 +25,11 @@
     }
   }
   const probe = async (site,slug) => {
-    console.log('probe',{site,slug})
+    // console.log('probe',{site,slug})
     return federation[site][slug]
   }
   const backlinks = slug => {
-    console.log('backlinks',slug)
+    // console.log('backlinks',slug)
     const pages = {
       'this-page': {
         'from-page': {'title': 'From Page','sites': []}
@@ -86,7 +91,18 @@
         const result = await graphviz.evalTree(['GRAPH'],context,[])
         return expect(result[1]).to.be('"World" -> "This\nPage"');
       });
+      it('can selectively display one item', async () => {
+        const result = await graphviz.evalTree(['HERE',['WHERE /^See also/',['LINKS HERE -> NODE']]],context,[])
+        return expect(result[0]).to.be('"This\nPage" -> "Special\nPage"');
+      });
+      it('can selectively display one pagefold', async () => {
+        const result = await graphviz.evalTree(['HERE',['WHERE FOLD wanted',['LINKS HERE -> NODE']]],context,[])
+        return expect(result[0]).to.be('"This\nPage" -> "Want\nThis"');
+      });
+      it('can selectively display items with mark fields ', async () => {
+        const result = await graphviz.evalTree(['HERE',['WHERE mark',['LINKS HERE -> NODE']]],context,[])
+        return expect(result[0]).to.be('"This\nPage" -> "Want\nMarked"');
+      });
     });
   });
 }).call(this);
-
