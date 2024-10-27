@@ -1,9 +1,7 @@
+import {instance} from 'https://cdn.jsdelivr.net/npm/@viz-js/viz@3.9.0/+esm';
+let moduleLoaded, viz;
+
 (function() {
-  let moduleLoaded;
-
-  // https://github.com/hpcc-systems/hpcc-js-wasm
-  // https://github.com/fedwiki/wiki/issues/63
-
   function expand(text) {
     return text
       .replace(/&/g, '&amp;')
@@ -209,7 +207,7 @@ ${item.dot??''}`
           deeper.push({tree:ir, context})
 
         } else if (ir.match(/^[A-Z]/)) {
-          
+
           if (ir.match(/^LINKS/)) {
             let text = context.want.map(p=>p.text).join("\n")
             let links = (text.match(/\[\[.*?\]\]/g)||[]).map(l => l.slice(2,-2))
@@ -453,32 +451,32 @@ ${item.dot??''}`
 <a href="#" data-action="download" title="Download"><img width="18" height="18" alt="download" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="grey"><g><rect fill="none" height="24" width="24"/></g><g><path d="M5,20h14v-2H5V20z M19,9h-4V3H9v6H5l7,7L19,9z"/></g></svg>'></a>
 <a href="#" data-action="zoom" title="Zoom"><img width="18" height="18" alt="toggle zoom" src='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path fill="grey" d="M15,3l2.3,2.3l-2.89,2.87l1.42,1.42L18.7,6.7L21,9V3H15z M3,9l2.3-2.3l2.87,2.89l1.42-1.42L6.7,5.3L9,3H3V9z M9,21 l-2.3-2.3l2.89-2.87l-1.42-1.42L5.3,17.3L3,15v6H9z M21,15l-2.3,2.3l-2.87-2.89l-1.42,1.42l2.89,2.87L15,21h6V15z"/></g></g></g></svg>'></a>
 </nav>
-<graphviz-viewer>${dot}</graphviz-viewer>`)
-      let $viewer = $item.find('graphviz-viewer')
-      let viewer = $viewer.get(0);
-      viewer.render().then(svg => {
-        item.dot = viewer.dot
-        item.svg = viewer.svg
-        function click(event) {
-          event.stopPropagation()
-          event.preventDefault()
-          const node = event.target.closest('.node')
-          const edge = event.target.closest('.edge')
-          if (node||edge) {
-            const title = Array.from(
-              (node||edge).querySelectorAll("text")
-            ).map(el => el.textContent.trim()).join(" ")
-            let $page = $item.parents('.page')
-            if (title) {
-              console.log('click', title)
-              // set context for doInternalLink
-              wiki.pageHandler.context = wiki.lineup.atKey($page.data('key')).getContext()
-              wiki.doInternalLink(title, event.shiftKey ? null : $page)
-            }
+<div class="diagram"></class>`)
+      let $diagram = $item.find('.diagram')
+      let diagram = $diagram.get(0)
+      const svg = viz(dot)
+      item.dot = dot
+      item.svg = svg.outerHTML
+      function click(event) {
+        event.stopPropagation()
+        event.preventDefault()
+        const node = event.target.closest('.node')
+        const edge = event.target.closest('.edge')
+        if (node||edge) {
+          const title = Array.from(
+            (node||edge).querySelectorAll("text")
+          ).map(el => el.textContent.trim()).join(" ")
+          let $page = $item.parents('.page')
+          if (title) {
+            console.log('click', title)
+            // set context for doInternalLink
+            wiki.pageHandler.context = wiki.lineup.atKey($page.data('key')).getContext()
+            wiki.doInternalLink(title, event.shiftKey ? null : $page)
           }
         }
-        svg.addEventListener("click", click)
-      })
+      }
+      svg.addEventListener("click", click)
+      diagram.append(svg)
     } catch (err) {
       console.log('makedot',err)
       $item.html(message(err.message))
@@ -489,7 +487,7 @@ ${item.dot??''}`
     // only continue if event is from a graphviz popup.
     // events from a popup window will have an opener
     // ensure that the popup window is one of ours
-    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') { 
+    if (!event.source.opener || event.source.location.pathname !== '/plugins/graphviz/dialog/') {
       if (wiki.debug) {console.log('graphvizListener - not for us', {event})}
       return
     }
@@ -514,7 +512,20 @@ ${item.dot??''}`
   }
 
   if (typeof window !== "undefined" && window !== null) {
-    moduleLoaded = import('/plugins/graphviz/graphviz-viewer.js');
+    moduleLoaded = new Promise(async (resolve, reject) => {
+      try {
+        // https://github.com/mdaines/viz-js
+        viz = await instance().then(VIZ => dot => {
+          const svg = VIZ.renderSVGElement(dot);
+          svg.style.maxWidth = "100%";
+          svg.style.height = "auto";
+          return svg
+        })
+        resolve(viz)
+      } catch (error) {
+        reject({error})
+      }
+    })
     window.plugins.graphviz = {emit, bind};
     if (typeof window.graphvizListener !== "undefined" || window.graphvizListener == null) {
       console.log('**** Adding graphviz listener')
