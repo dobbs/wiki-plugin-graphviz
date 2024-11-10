@@ -2,7 +2,7 @@ let drawInitialized, draw;
 
 (function() {
   async function initializeDraw() {
-    const {instance} = await import('https://cdn.jsdelivr.net/npm/@viz-js/viz@3.9.0/+esm');
+    const {instance} = await import('./viz@3.9.0/viz-standalone.mjs');
     const viz = await instance();
     draw = function draw(dot) {
       const svg = viz.renderSVGElement(dot);
