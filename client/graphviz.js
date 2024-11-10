@@ -1,7 +1,18 @@
-import {instance} from 'https://cdn.jsdelivr.net/npm/@viz-js/viz@3.9.0/+esm';
-let moduleLoaded, viz;
+let drawInitialized, draw;
 
 (function() {
+  async function initializeDraw() {
+    const {instance} = await import('https://cdn.jsdelivr.net/npm/@viz-js/viz@3.9.0/+esm');
+    const viz = await instance();
+    draw = function draw(dot) {
+      const svg = viz.renderSVGElement(dot);
+      svg.style.maxWidth = "100%";
+      svg.style.height = "auto";
+      return svg;
+    }
+    return draw;
+  }
+
   function expand(text) {
     return text
       .replace(/&/g, '&amp;')
@@ -399,7 +410,7 @@ ${item.dot??''}`
   };
 
   async function bind($item, item) {
-    await moduleLoaded
+    await drawInitialized
     $item.on('dblclick', () => {
       return wiki.textEditor($item, includeStaticDotInText($item.data().item));
     });
@@ -454,7 +465,7 @@ ${item.dot??''}`
 <div class="diagram"></class>`)
       let $diagram = $item.find('.diagram')
       let diagram = $diagram.get(0)
-      const svg = viz(dot)
+      const svg = draw(dot)
       item.dot = dot
       item.svg = svg.outerHTML
       function click(event) {
@@ -512,25 +523,15 @@ ${item.dot??''}`
   }
 
   if (typeof window !== "undefined" && window !== null) {
-    moduleLoaded = new Promise(async (resolve, reject) => {
-      try {
-        // https://github.com/mdaines/viz-js
-        viz = await instance().then(VIZ => dot => {
-          const svg = VIZ.renderSVGElement(dot);
-          svg.style.maxWidth = "100%";
-          svg.style.height = "auto";
-          return svg
-        })
-        resolve(viz)
-      } catch (error) {
-        reject({error})
+    if (!window.plugins.graphviz) {
+      window.plugins.graphviz = {emit, bind};
+      drawInitialized = initializeDraw()
+      if (typeof window.graphvizListener !== "undefined"
+          || window.graphvizListener == null) {
+        console.log('**** Adding graphviz listener')
+        window.graphvizListener = graphvizListener
+        window.addEventListener("message", graphvizListener)
       }
-    })
-    window.plugins.graphviz = {emit, bind};
-    if (typeof window.graphvizListener !== "undefined" || window.graphvizListener == null) {
-      console.log('**** Adding graphviz listener')
-      window.graphvizListener = graphvizListener
-      window.addEventListener("message", graphvizListener)
     }
   }
 
