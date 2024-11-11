@@ -20,13 +20,10 @@
     "Nick Niemeir <nick.niemeir@gmail.com>"
   ],
   "scripts": {
-    "test": "mocha",
-    "authors": "grunt update-authors"
+    "test": "mocha"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "grunt": "^1.5.3",
-    "grunt-git-authors": "^3.2.0",
     "mocha": "^10.2.0"
   },
   "license": "MIT",
