@@ -32,9 +32,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dobbs/wiki-plugin-graphviz.git"
+    "url": "https://github.com/fedwiki/wiki-plugin-graphviz.git"
   },
   "bugs": {
-    "url": "https://github.com/dobbs/wiki-plugin-graphviz/issues"
+    "url": "https://github.com/fedwiki/wiki-plugin-graphviz/issues"
   }
 }
