@@ -1,6 +1,6 @@
 {
   "name": "wiki-plugin-graphviz",
-  "version": "0.11.3",
+  "version": "0.11.4",
   "description": "Federated Wiki - Graphviz Plugin",
   "keywords": [
     "graphviz",
